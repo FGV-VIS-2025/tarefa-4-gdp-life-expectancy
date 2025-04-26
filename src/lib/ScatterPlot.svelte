@@ -1,6 +1,7 @@
 <script>
   import { onMount } from 'svelte';
   import * as d3 from 'd3';
+  import { base } from '$app/paths';
 
   let svgElement;
   const width = 1000;
@@ -176,7 +177,7 @@
   }
 
   onMount(async () => {
-    const data = await d3.csv('/gdp-life-expectancy.csv', (d) => {
+    const data = await d3.csv(`${base}/gdp-life-expectancy.csv`, (d) => {
       const lex = +d.lex;
       return {
         country: d.country,
