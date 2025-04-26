@@ -116,14 +116,7 @@
 
     const filteredData = allData.filter(d => d.year === year && !isNaN(d.gdp) && d.gdp > 0 && !isNaN(d.lex) && d.lex > 0);
 
-    // xScale.domain([0, d3.max(filteredData, d => d.gdp)]).nice(); // Domain is now fixed
     yScale.domain([globalYMin, globalYMax]); // Keep Y scale dynamic or fix as needed
-
-    // No need to update x-axis transitionally if its domain is fixed
-    // svg.select('.x-axis')
-    //    .transition()
-    //    .duration(750)
-    //    .call(xAxis);
 
     svg.select('.y-axis')
        .transition()
@@ -208,27 +201,25 @@
     highlightGroup = svg.append("g").attr("class", "highlight-layer");
 
     xScale = d3.scaleLog()
-      .domain([250, 200000]) // Adjusted domain start to 250 for visual spacing
+      .domain([250, 200000]) 
       .range([0, width - margin.left - margin.right]);
 
     yScale = d3.scaleLinear()
       .domain([globalYMin, globalYMax])
       .range([height - margin.top - margin.bottom, 0]);
 
-    // Custom ticks for log scale
     const xTickValues = [500, 1000, 2000, 4000, 8000, 16000, 32000, 64000, 128000];
-    const formatNumber = d3.format(","); // Basic formatter
+    const formatNumber = d3.format(","); 
     const formatTicks = (d) => {
-        if (d >= 10000) { // Use 'k' notation only for 10k and above
+        if (d >= 10000) { 
             return d3.format(".0s")(d).replace('k', 'k');
         }
-        // Display the number as is for values below 10k
         return d;
     };
 
     xAxis = d3.axisBottom(xScale)
               .tickValues(xTickValues)
-              .tickFormat(formatTicks); // Apply custom ticks and format
+              .tickFormat(formatTicks);
 
     yAxis = d3.axisLeft(yScale)
              .ticks((globalYMax - globalYMin) / 10)
