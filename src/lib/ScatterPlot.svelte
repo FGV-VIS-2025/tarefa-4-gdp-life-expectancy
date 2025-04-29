@@ -5,8 +5,8 @@
 
   // Configurações e constantes
   const CONFIG = {
-    width: 1000,
-    height: 600,
+    width: 800,
+    height: 500,
     margin: { top: 20, right: 30, bottom: 60, left: 60 },
     playSpeed: 200,
     transitionDuration: 300,
@@ -21,8 +21,8 @@
       lex: '#E07A5F'
     },
     subplotSize: {
-      width: 400,
-      height: 150,
+      width: 350,
+      height: 175,
       margin: { top: 20, right: 20, bottom: 30, left: 40 }
     },
     gdpValueFormat: d => d >= 10000 ? d3.format('.0s')(d) : d3.format(',')(d),
@@ -123,8 +123,8 @@
       .style('font-weight', 'bold')
       .attr('fill', '#ccc');
 
-    // Criar tooltip
-    tooltip = d3.select(svgElement.parentNode)
+    // Create tooltip appended to body
+    tooltip = d3.select('body') // Append to body instead of parentNode
       .append('div')
       .attr('class', 'tooltip')
       .style('opacity', 0);
@@ -287,7 +287,8 @@
   function updateGridLines() {
     svg.selectAll('.grid').remove();
     
-    // Linhas de grade horizontais
+    // Linhas de grade horizontais - COMMENTED OUT
+    /*
     svg.append('g').attr('class','grid')
       .call(d3.axisLeft(yScale)
         .ticks((globalYMax-globalYMin)/10)
@@ -295,8 +296,10 @@
         .tickFormat(''))
       .selectAll('line')
       .attr('stroke','#e0e0e0');
+    */
     
-    // Linhas de grade verticais
+    // Linhas de grade verticais - COMMENTED OUT
+    /*
     svg.append('g').attr('class','grid')
       .attr('transform',`translate(0,${CONFIG.height - CONFIG.margin.top - CONFIG.margin.bottom})`)
       .call(d3.axisBottom(xScale)
@@ -305,6 +308,7 @@
         .tickFormat(''))
       .selectAll('line')
       .attr('stroke','#e0e0e0');
+    */
   }
 
   // Atualizar pontos de dados
@@ -348,6 +352,13 @@
       .attr('stroke', CONFIG.pointHighlightStroke)
       .attr('stroke-width', 1.5);
     
+    // Get element's position relative to viewport
+    const rect = event.currentTarget.getBoundingClientRect();
+    
+    // Calculate position relative to the document
+    const targetX = rect.left + rect.width / 2 + window.scrollX;
+    const targetY = rect.top + window.scrollY;
+
     tooltip.style('opacity', 0.9)
       .html(
         `<strong>${d.country}</strong><br/>` +
@@ -356,8 +367,9 @@
         `Expectativa de Vida: ${d.lex.toFixed(1)}<br/>` +
         `População: ${d3.format('.3s')(d.population)}`
       )
-      .style('left', `${xScale(d.gdp) + CONFIG.margin.left + 10}px`)
-      .style('top', `${yScale(d.lex) + CONFIG.margin.top - 30}px`);
+      // Position the tooltip using the calculated element position
+      .style('left', `${targetX}px`) 
+      .style('top', `${targetY}px`);
   }
 
   // Esconder tooltip
@@ -441,17 +453,17 @@
       .attr('class', 'gdp-point')
       .attr('cx', d => x(d.year))
       .attr('cy', d => yGDP(d.gdp))
-      .attr('r', 3)
+      .attr('r', 2)
       .attr('fill', CONFIG.lineColors.gdp);
 
     // Adicionar título ao gráfico de PIB
     gdpSvg.append('text')
       .attr('x', width / 2)
-      .attr('y', margin.top / 2)
+      .attr('y', margin.top * 0.8)
       .attr('text-anchor', 'middle')
-      .style('font-size', '1em')
+      .style('font-size', '0.9em')
       .style('font-weight', 'bold')
-      .text('PIB per Capita');
+      .text(`PIB per Capita (${countryHistory[0].country})`);
 
     // Criar gráfico de expectativa de vida
     const lexSvg = d3.select(lexPlot)
@@ -486,26 +498,17 @@
       .attr('class', 'lex-point')
       .attr('cx', d => x(d.year))
       .attr('cy', d => yLex(d.lex))
-      .attr('r', 3)
+      .attr('r', 2)
       .attr('fill', CONFIG.lineColors.lex);
 
     // Adicionar título ao gráfico de expectativa de vida
     lexSvg.append('text')
       .attr('x', width / 2)
-      .attr('y', margin.top / 2)
+      .attr('y', margin.top * 0.8)
       .attr('text-anchor', 'middle')
-      .style('font-size', '1em')
+      .style('font-size', '0.9em')
       .style('font-weight', 'bold')
-      .text('Expectativa de Vida');
-      
-    // Adicionar nome do país
-    gdpSvg.append('text')
-      .attr('x', width / 2)
-      .attr('y', height - 5)
-      .attr('text-anchor', 'middle')
-      .style('font-size', '1.2em')
-      .style('font-weight', 'bold')
-      .text(countryHistory[0].country);
+      .text(`Expectativa de Vida (${countryHistory[0].country})`);
   }
 
   // Inicialização quando o componente é montado
@@ -608,35 +611,39 @@
     
   </div>
   
-  <div class="main-chart">
-    <svg bind:this={svgElement}></svg>
-    <div class="help-text">
-      * Arraste um círculo para ver a trajetória histórica do país
+  <div class="chart-area">
+    <div class="main-chart">
+      <svg bind:this={svgElement}></svg>
+      <div class="help-text">
+        * Arraste um círculo para ver a trajetória histórica do país
+      </div>
     </div>
-  </div>
-
-  <div class="subplots">
-    <svg bind:this={gdpPlot}></svg>
-    <svg bind:this={lexPlot}></svg>
+  
+    <div class="subplots">
+      <svg bind:this={gdpPlot}></svg>
+      <svg bind:this={lexPlot}></svg>
+    </div>
   </div>
 </div>
 
 <style>
   .visualization-container {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    max-width: 1100px;
+    max-width: 1250px;
     margin: 0 auto;
     padding: 1rem;
   }
   
   h2 {
     text-align: center;
-    margin: 0.5em 0;
+    margin: 0;
+    font-size: 1.4em;
     color: #333;
   }
   
   .main-chart {
     position: relative;
+    flex-shrink: 0;
   }
   
   svg {
@@ -658,7 +665,7 @@
     justify-content: center;
     align-items: center;
     gap: 1em;
-    margin: 1em 0;
+    margin: 0.2em 0;
   }
   
   .control-button {
@@ -666,8 +673,8 @@
     color: white;
     border: none;
     border-radius: 4px;
-    padding: 8px 16px;
-    font-size: 14px;
+    padding: 6px 12px;
+    font-size: 13px;
     cursor: pointer;
     transition: background 0.2s;
   }
@@ -696,7 +703,7 @@
   }
   
   .year-label {
-    font-size: 1.1em;
+    font-size: 1em;
     font-weight: bold;
     color: #333;
     min-width: 50px;
@@ -713,14 +720,14 @@
     font-size: 0.85em;
     z-index: 1000;
     box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+    transform: translate(-50%, -110%);
+    transition: opacity 0.2s;
   }
   
   .subplots {
     display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 2em;
-    margin-top: 1em;
+    flex-direction: column;
+    gap: 1em;
   }
   
   .subplots svg {
@@ -738,8 +745,8 @@
   .stats-panel {
     display: flex;
     justify-content: center;
-    gap: 2em;
-    margin: 1em 0;
+    gap: 0.8em;
+    margin: 0.2em 0;
   }
   
   .stat-box {
@@ -747,19 +754,19 @@
     flex-direction: column;
     align-items: center;
     background: #f5f5f5;
-    padding: 0.8em 1.5em;
+    padding: 0.3em 0.6em;
     border-radius: 8px;
     border: 1px solid #ddd;
   }
   
   .stat-value {
-    font-size: 1.3em;
+    font-size: 1em;
     font-weight: bold;
     color: #333;
   }
   
   .stat-label {
-    font-size: 0.8em;
+    font-size: 0.65em;
     color: #666;
     margin-top: 0.2em;
   }
@@ -767,9 +774,9 @@
   .legend {
     display: flex;
     justify-content: center;
-    gap: 1.5em;
-    margin: 0.5em 0;
-    font-size: 0.85em;
+    gap: 0.8em;
+    margin: 0;
+    font-size: 0.8em;
   }
   
   .legend-item {
@@ -783,5 +790,12 @@
     width: 10px;
     height: 10px;
     border-radius: 50%;
+  }
+  
+  .chart-area {
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+    margin-top: 0.2em;
   }
 </style>
