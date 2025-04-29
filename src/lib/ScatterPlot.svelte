@@ -432,7 +432,9 @@
     
     gdpSvg.append('g')
       .attr('transform', `translate(${margin.left},0)`)
-      .call(d3.axisLeft(yGDP).tickFormat(d => d >= 10000 ? d3.format('.0s')(d) : d3.format(',')(d)));
+      .call(d3.axisLeft(yGDP)
+        .ticks(Math.max(2, Math.ceil(d3.max(countryHistory, d => d.gdp) / 20000)))
+        .tickFormat(d => d >= 10000 ? d3.format('.0s')(d) : d3.format(',')(d)));
 
     // Adicionar linha ao gráfico de PIB
     gdpSvg.append('path')
@@ -477,7 +479,9 @@
     
     lexSvg.append('g')
       .attr('transform', `translate(${margin.left},0)`)
-      .call(d3.axisLeft(yLex));
+      .call(d3.axisLeft(yLex)
+        .ticks(Math.max(2, Math.round((d3.max(countryHistory, d => d.lex) - d3.min(countryHistory, d => d.lex)) / 20)))
+      );
 
     // Adicionar linha ao gráfico de expectativa de vida
     lexSvg.append('path')
