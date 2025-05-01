@@ -14,8 +14,7 @@
     pointRadius: 5,
     pointOpacity: 0.7,
     pointHighlightStroke: '#333',
-    pointColor: d => d.population > 100000000 ? '#E63946' : 
-                     d.population > 50000000 ? '#F4A261' : 'steelblue',
+    pointColor: d => 'steelblue',
     lineColors: {
       gdp: '#457B9D',
       lex: '#E07A5F'
@@ -71,8 +70,8 @@
       .filter(d => d.gdp > 0 && d.lex > 0)
       .map(d => ({
         ...d,
-        // Simulação de dados de população (poderíamos carregar de um arquivo real)
-        population: Math.round(Math.random() * 1000000000)
+        // Remove simulation of population data
+        // population: Math.round(Math.random() * 1000000000) 
       }));
   }
 
@@ -184,17 +183,33 @@
       .transition().duration(200).ease(CONFIG.transitionEase)
       .attr('opacity', 0.1);
 
-    // Destacar pontos históricos do país
+    // Destacar pontos históricos do país com pontos cinza pequenos e uma linha
     highlightGroup.selectAll("*").remove();
+    
+    // Adicionar linha cinza conectando os pontos históricos
+    highlightGroup.append("path")
+      .datum(countryHistory)
+      .attr("class", "history-path")
+      .attr("fill", "none")
+      .attr("stroke", "#aaa")
+      .attr("stroke-width", 1.5)
+      .attr("stroke-opacity", 0.6)
+      .attr("d", d3.line()
+        .x(p => xScale(p.gdp))
+        .y(p => yScale(p.lex))
+      )
+      .style("pointer-events", "none");
+
+    // Adicionar pontos cinza pequenos para cada ano histórico
     highlightGroup.selectAll(".highlight-point")
       .data(countryHistory, p => p.year)
       .enter().append("circle")
       .attr("class", "highlight-point")
       .attr("cx", p => xScale(p.gdp))
       .attr("cy", p => yScale(p.lex))
-      .attr("r", 4)
-      .attr("fill", "red")
-      .attr("opacity", 0.6)
+      .attr("r", 2) // Raio menor
+      .attr("fill", "#aaa") // Cor cinza
+      .attr("opacity", 0.8)
       .style("pointer-events", "none");
   }
 
@@ -237,8 +252,8 @@
       .attr("stroke-width", null)
       .style("cursor", "grab");
     
-    // Limpar destaque
-    highlightGroup.selectAll(".highlight-point").remove();
+    // Limpar destaque (pontos e linha)
+    highlightGroup.selectAll(".highlight-point, .history-path").remove();
     
     // Restaurar opacidade de todos os pontos
     svg.selectAll('circle.data-point')
@@ -364,8 +379,7 @@
         `<strong>${d.country}</strong><br/>` +
         `Ano: ${d.year}<br/>` +
         `PIB: ${d3.format(',')(d.gdp)}<br/>` +
-        `Expectativa de Vida: ${d.lex.toFixed(1)}<br/>` +
-        `População: ${d3.format('.3s')(d.population)}`
+        `Expectativa de Vida: ${d.lex.toFixed(1)}<br/>`
       )
       // Position the tooltip using the calculated element position
       .style('left', `${targetX}px`) 
@@ -599,22 +613,6 @@
     <span class="year-label">{selectedYear}</span>
   </div>
   
-  <div class="legend">
-    <span class="legend-item">
-      <span class="dot" style="background-color: #E63946;"></span>
-      População &gt; 100M
-    </span>
-    <span class="legend-item">
-      <span class="dot" style="background-color: #F4A261;"></span>
-      População &gt; 50M
-    </span>
-    <span class="legend-item">
-      <span class="dot" style="background-color: steelblue;"></span>
-      População &lt; 50M
-    </span>
-    
-  </div>
-  
   <div class="chart-area">
     <div class="main-chart">
       <svg bind:this={svgElement}></svg>
@@ -773,27 +771,6 @@
     font-size: 0.65em;
     color: #666;
     margin-top: 0.2em;
-  }
-  
-  .legend {
-    display: flex;
-    justify-content: center;
-    gap: 0.8em;
-    margin: 0;
-    font-size: 0.8em;
-  }
-  
-  .legend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.4em;
-  }
-  
-  .dot {
-    display: inline-block;
-    width: 10px;
-    height: 10px;
-    border-radius: 50%;
   }
   
   .chart-area {
