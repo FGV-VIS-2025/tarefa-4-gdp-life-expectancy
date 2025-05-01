@@ -442,13 +442,30 @@
     // Adicionar eixos ao gráfico de PIB
     gdpSvg.append('g')
       .attr('transform', `translate(0,${height - margin.bottom})`)
-      .call(d3.axisBottom(x).ticks(5).tickFormat(CONFIG.yearTickFormat));
+      .call(d3.axisBottom(x).ticks(5).tickFormat(CONFIG.yearTickFormat))
+      .append('text')
+        .attr('class', 'axis-label')
+        .attr('x', width / 2)
+        .attr('y', margin.bottom - 5)
+        .attr('fill', 'currentColor')
+        .style('text-anchor', 'middle')
+        .style('font-size', '0.8em')
+        .text('Ano');
     
     gdpSvg.append('g')
       .attr('transform', `translate(${margin.left},0)`)
       .call(d3.axisLeft(yGDP)
         .ticks(Math.max(2, Math.ceil(d3.max(countryHistory, d => d.gdp) / 20000)))
-        .tickFormat(d => d >= 10000 ? d3.format('.0s')(d) : d3.format(',')(d)));
+        .tickFormat(d => d >= 10000 ? d3.format('.0s')(d) : d3.format(',')(d)))
+      .append('text')
+        .attr('class', 'axis-label')
+        .attr('transform', 'rotate(-90)')
+        .attr('x', -(height - margin.bottom - margin.top) / 2)
+        .attr('y', -margin.left + 12)
+        .attr('fill', 'currentColor')
+        .style('text-anchor', 'middle')
+        .style('font-size', '0.8em')
+        .text('PIB per Capita');
 
     // Adicionar linha ao gráfico de PIB
     gdpSvg.append('path')
@@ -489,13 +506,30 @@
     // Adicionar eixos ao gráfico de expectativa de vida
     lexSvg.append('g')
       .attr('transform', `translate(0,${height - margin.bottom})`)
-      .call(d3.axisBottom(x).ticks(5).tickFormat(CONFIG.yearTickFormat));
+      .call(d3.axisBottom(x).ticks(5).tickFormat(CONFIG.yearTickFormat))
+      .append('text')
+        .attr('class', 'axis-label')
+        .attr('x', width / 2)
+        .attr('y', margin.bottom - 5)
+        .attr('fill', 'currentColor')
+        .style('text-anchor', 'middle')
+        .style('font-size', '0.8em')
+        .text('Ano');
     
     lexSvg.append('g')
       .attr('transform', `translate(${margin.left},0)`)
       .call(d3.axisLeft(yLex)
         .ticks(Math.max(2, Math.round((d3.max(countryHistory, d => d.lex) - d3.min(countryHistory, d => d.lex)) / 20)))
-      );
+      )
+      .append('text')
+        .attr('class', 'axis-label')
+        .attr('transform', 'rotate(-90)')
+        .attr('x', -(height - margin.bottom - margin.top) / 2)
+        .attr('y', -margin.left + 12)
+        .attr('fill', 'currentColor')
+        .style('text-anchor', 'middle')
+        .style('font-size', '0.8em')
+        .text('Expectativa de Vida');
 
     // Adicionar linha ao gráfico de expectativa de vida
     lexSvg.append('path')
