@@ -121,6 +121,7 @@
   let filteredCountries = [];
   let showLabels = false;
   let countryLabels = [];
+  let selectedContinent = null;
 
   // Elementos D3
   let xScale, yScale, xAxis, yAxis, svg, yearText, highlightGroup;
@@ -175,6 +176,18 @@
         selectedCountry = null;
       }
     }
+    updatePlot(selectedYear);
+  }
+
+  // Função para filtrar por continente
+  function filterByContinent(continent) {
+    selectedContinent = selectedContinent === continent ? null : continent;
+    if (selectedContinent) {
+      filteredCountries = allData.filter(d => d.continent === selectedContinent);
+    } else {
+      filteredCountries = [];
+    }
+    selectedCountry = null;
     updatePlot(selectedYear);
   }
 
@@ -849,6 +862,44 @@
       class="search-input"
     />
   </div>
+
+  <div class="continent-filters">
+    <button 
+      class="continent-button" 
+      class:active={selectedContinent === 'Africa'}
+      on:click={() => filterByContinent('Africa')}
+    >
+      África
+    </button>
+    <button 
+      class="continent-button" 
+      class:active={selectedContinent === 'Americas'}
+      on:click={() => filterByContinent('Americas')}
+    >
+      Américas
+    </button>
+    <button 
+      class="continent-button" 
+      class:active={selectedContinent === 'Asia'}
+      on:click={() => filterByContinent('Asia')}
+    >
+      Ásia
+    </button>
+    <button 
+      class="continent-button" 
+      class:active={selectedContinent === 'Europe'}
+      on:click={() => filterByContinent('Europe')}
+    >
+      Europa
+    </button>
+    <button 
+      class="continent-button" 
+      class:active={selectedContinent === 'Oceania'}
+      on:click={() => filterByContinent('Oceania')}
+    >
+      Oceania
+    </button>
+  </div>
   
   <div class="controls">
     <button on:click={rewind} class="control-button">
@@ -1134,5 +1185,33 @@
     display: flex;
     flex-direction: column;
     gap: 4px;
+  }
+
+  .continent-filters {
+    display: flex;
+    justify-content: center;
+    gap: 0.5em;
+    margin: 0.5em 0;
+    flex-wrap: wrap;
+  }
+
+  .continent-button {
+    padding: 6px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    font-size: 0.9em;
+    transition: all 0.2s;
+  }
+
+  .continent-button:hover {
+    background: #f0f0f0;
+  }
+
+  .continent-button.active {
+    background: #4c78a8;
+    color: white;
+    border-color: #4c78a8;
   }
 </style>
