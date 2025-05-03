@@ -14,10 +14,20 @@
     pointRadius: 5,
     pointOpacity: 0.7,
     pointHighlightStroke: '#333',
-    pointColor: d => 'steelblue',
+    pointColor: d => {
+      switch(d.continent) {
+        case 'Africa': return '#d73027'; 
+        case 'Americas': return '#4575b4'; 
+        case 'Asia': return '#2e7d32';
+        case 'Europe': return '#6a1b9a'; 
+        case 'Oceania': return '#e65100'; 
+        default: return '#666';
+      }
+    },
     lineColors: {
       gdp: '#457B9D',
-      lex: '#E07A5F'
+      lex: '#E07A5F',
+      history: '#666'
     },
     subplotSize: {
       width: 350,
@@ -26,7 +36,70 @@
     },
     gdpValueFormat: d => d >= 10000 ? d3.format('.0s')(d) : d3.format(',')(d),
     yearTickFormat: d3.format('d'),
-    lexValueFormat: d3.format('.1f')
+    lexValueFormat: d3.format('.1f'),
+    hoverScale: 1.5, // Scale factor for hover effect
+    hoverStrokeWidth: 2,
+    hoverStrokeColor: '#000'
+  };
+
+  // Mapeamento de países para continentes
+  const countryToContinent = {
+    // África
+    'Angola': 'Africa', 'Benin': 'Africa', 'Botswana': 'Africa', 'Burkina Faso': 'Africa',
+    'Burundi': 'Africa', 'Cameroon': 'Africa', 'Cape Verde': 'Africa', 'Central African Republic': 'Africa',
+    'Chad': 'Africa', 'Comoros': 'Africa', 'Congo': 'Africa', 'Cote d\'Ivoire': 'Africa',
+    'Democratic Republic of Congo': 'Africa', 'Djibouti': 'Africa', 'Egypt': 'Africa',
+    'Equatorial Guinea': 'Africa', 'Eritrea': 'Africa', 'Ethiopia': 'Africa', 'Gabon': 'Africa',
+    'Gambia': 'Africa', 'Ghana': 'Africa', 'Guinea': 'Africa', 'Guinea-Bissau': 'Africa',
+    'Kenya': 'Africa', 'Lesotho': 'Africa', 'Liberia': 'Africa', 'Libya': 'Africa',
+    'Madagascar': 'Africa', 'Malawi': 'Africa', 'Mali': 'Africa', 'Mauritania': 'Africa',
+    'Mauritius': 'Africa', 'Morocco': 'Africa', 'Mozambique': 'Africa', 'Namibia': 'Africa',
+    'Niger': 'Africa', 'Nigeria': 'Africa', 'Rwanda': 'Africa', 'Sao Tome and Principe': 'Africa',
+    'Senegal': 'Africa', 'Seychelles': 'Africa', 'Sierra Leone': 'Africa', 'Somalia': 'Africa',
+    'South Africa': 'Africa', 'South Sudan': 'Africa', 'Sudan': 'Africa', 'Swaziland': 'Africa',
+    'Tanzania': 'Africa', 'Togo': 'Africa', 'Tunisia': 'Africa', 'Uganda': 'Africa',
+    'Zambia': 'Africa', 'Zimbabwe': 'Africa',
+
+    // Américas
+    'Argentina': 'Americas', 'Bolivia': 'Americas', 'Brazil': 'Americas', 'Chile': 'Americas',
+    'Colombia': 'Americas', 'Costa Rica': 'Americas', 'Cuba': 'Americas', 'Dominican Republic': 'Americas',
+    'Ecuador': 'Americas', 'El Salvador': 'Americas', 'Guatemala': 'Americas', 'Haiti': 'Americas',
+    'Honduras': 'Americas', 'Jamaica': 'Americas', 'Mexico': 'Americas', 'Nicaragua': 'Americas',
+    'Panama': 'Americas', 'Paraguay': 'Americas', 'Peru': 'Americas', 'Trinidad and Tobago': 'Americas',
+    'Uruguay': 'Americas', 'Venezuela': 'Americas', 'Canada': 'Americas', 'United States': 'Americas',
+
+    // Ásia
+    'Afghanistan': 'Asia', 'Armenia': 'Asia', 'Azerbaijan': 'Asia', 'Bahrain': 'Asia',
+    'Bangladesh': 'Asia', 'Bhutan': 'Asia', 'Brunei': 'Asia', 'Cambodia': 'Asia',
+    'China': 'Asia', 'Cyprus': 'Asia', 'Georgia': 'Asia', 'India': 'Asia',
+    'Indonesia': 'Asia', 'Iran': 'Asia', 'Iraq': 'Asia', 'Israel': 'Asia',
+    'Japan': 'Asia', 'Jordan': 'Asia', 'Kazakhstan': 'Asia', 'Kuwait': 'Asia',
+    'Kyrgyzstan': 'Asia', 'Laos': 'Asia', 'Lebanon': 'Asia', 'Malaysia': 'Asia',
+    'Maldives': 'Asia', 'Mongolia': 'Asia', 'Myanmar': 'Asia', 'Nepal': 'Asia',
+    'North Korea': 'Asia', 'Oman': 'Asia', 'Pakistan': 'Asia', 'Palestine': 'Asia',
+    'Philippines': 'Asia', 'Qatar': 'Asia', 'Saudi Arabia': 'Asia', 'Singapore': 'Asia',
+    'South Korea': 'Asia', 'Sri Lanka': 'Asia', 'Syria': 'Asia', 'Taiwan': 'Asia',
+    'Tajikistan': 'Asia', 'Thailand': 'Asia', 'Timor-Leste': 'Asia', 'Turkey': 'Asia',
+    'Turkmenistan': 'Asia', 'United Arab Emirates': 'Asia', 'Uzbekistan': 'Asia', 'Vietnam': 'Asia',
+    'Yemen': 'Asia',
+
+    // Europa
+    'Albania': 'Europe', 'Austria': 'Europe', 'Belarus': 'Europe', 'Belgium': 'Europe',
+    'Bosnia and Herzegovina': 'Europe', 'Bulgaria': 'Europe', 'Croatia': 'Europe', 'Czech Republic': 'Europe',
+    'Denmark': 'Europe', 'Estonia': 'Europe', 'Finland': 'Europe', 'France': 'Europe',
+    'Germany': 'Europe', 'Greece': 'Europe', 'Hungary': 'Europe', 'Iceland': 'Europe',
+    'Ireland': 'Ireland', 'Italy': 'Europe', 'Latvia': 'Europe', 'Lithuania': 'Europe',
+    'Luxembourg': 'Europe', 'Macedonia': 'Europe', 'Malta': 'Europe', 'Moldova': 'Europe',
+    'Montenegro': 'Europe', 'Netherlands': 'Europe', 'Norway': 'Europe', 'Poland': 'Europe',
+    'Portugal': 'Europe', 'Romania': 'Europe', 'Russia': 'Europe', 'Serbia': 'Europe',
+    'Slovakia': 'Europe', 'Slovenia': 'Europe', 'Spain': 'Europe', 'Sweden': 'Europe',
+    'Switzerland': 'Europe', 'Ukraine': 'Europe', 'United Kingdom': 'Europe',
+
+    // Oceania
+    'Australia': 'Oceania', 'Fiji': 'Oceania', 'Kiribati': 'Oceania', 'Marshall Islands': 'Oceania',
+    'Micronesia': 'Oceania', 'Nauru': 'Oceania', 'New Zealand': 'Oceania', 'Palau': 'Oceania',
+    'Papua New Guinea': 'Oceania', 'Samoa': 'Oceania', 'Solomon Islands': 'Oceania', 'Tonga': 'Oceania',
+    'Tuvalu': 'Oceania', 'Vanuatu': 'Oceania'
   };
 
   // Elementos do DOM
@@ -35,6 +108,7 @@
   let lexPlot;
   let yearSlider;
   let tooltipElement;
+  let searchInput;
   
   // Estado da aplicação
   let allData = [];
@@ -43,6 +117,10 @@
   let dataLoaded = false;
   let playing = false;
   let playInterval;
+  let selectedCountry = null;
+  let filteredCountries = [];
+  let showLabels = false;
+  let countryLabels = [];
 
   // Elementos D3
   let xScale, yScale, xAxis, yAxis, svg, yearText, highlightGroup;
@@ -65,13 +143,11 @@
 
   // Função para processar os dados recebidos
   function processData(data) {
-    // Adicionar campo de população aos dados (poderíamos obter de outra fonte)
     return data
       .filter(d => d.gdp > 0 && d.lex > 0)
       .map(d => ({
         ...d,
-        // Remove simulation of population data
-        // population: Math.round(Math.random() * 1000000000) 
+        continent: countryToContinent[d.country] || 'Unknown'
       }));
   }
 
@@ -80,6 +156,37 @@
     totalCountries = yearData.length;
     averageLifeExpectancy = d3.mean(yearData, d => d.lex);
     averageGDP = d3.mean(yearData, d => d.gdp);
+  }
+
+  // Função para filtrar países
+  function filterCountries(query) {
+    if (!query) {
+      filteredCountries = [];
+      selectedCountry = null;
+    } else {
+      const searchTerms = query.toLowerCase().split(' ').filter(term => term.length > 0);
+      filteredCountries = allData.filter(d => 
+        searchTerms.some(term => d.country.toLowerCase().includes(term))
+      );
+      // Se houver apenas um país nos resultados, selecioná-lo automaticamente
+      if (filteredCountries.length === 1) {
+        selectCountry(filteredCountries[0].country);
+      } else {
+        selectedCountry = null;
+      }
+    }
+    updatePlot(selectedYear);
+  }
+
+  // Função para selecionar um país
+  function selectCountry(country) {
+    selectedCountry = country;
+    const countryHistory = allData.filter(p => p.country === country && p.gdp > 0 && p.lex > 0);
+    drawSubplots(countryHistory);
+    
+    // Destacar o país selecionado
+    svg.selectAll('circle.data-point')
+      .attr('opacity', d => d.country === country ? 1 : 0.1);
   }
 
   // Inicializar os gráficos D3
@@ -125,7 +232,7 @@
     // Create tooltip appended to body
     tooltip = d3.select('body') // Append to body instead of parentNode
       .append('div')
-      .attr('class', 'tooltip')
+      .attr('class', 'global-tooltip')
       .style('opacity', 0);
     
     // Layer para destacar pontos
@@ -145,7 +252,7 @@
         .attr('y', CONFIG.margin.bottom - 15)
         .attr('fill', 'currentColor')
         .style('text-anchor', 'middle')
-        .text('PIB per Capita');
+        .text('PIB per Capita (USD)');
 
     // Eixo Y
     svg.append('g')
@@ -272,11 +379,31 @@
     updatePlot(selectedYear);
   }
 
+  // Função para atualizar os labels dos países
+  function updateCountryLabels() {
+    if (!showLabels) {
+      countryLabels = [];
+      return;
+    }
+
+    const currentData = (filteredCountries.length > 0 ? filteredCountries : allData)
+      .filter(d => d.year === selectedYear);
+
+    countryLabels = currentData.map(d => ({
+      country: d.country,
+      x: xScale(d.gdp),
+      y: yScale(d.lex),
+      gdp: d.gdp,
+      lex: d.lex
+    }));
+  }
+
   // Atualizar o gráfico principal para o ano selecionado
   function updatePlot(year) {
     if (!dataLoaded) return;
     
-    const subset = allData.filter(d => d.year === year);
+    const subset = (filteredCountries.length > 0 ? filteredCountries : allData)
+      .filter(d => d.year === year);
     calculateStatistics(subset);
 
     // Atualizar escalas e eixos
@@ -296,34 +423,14 @@
 
     // Atualizar texto do ano
     yearText.text(year);
+
+    // Atualizar labels dos países
+    updateCountryLabels();
   }
 
   // Atualizar linhas de grade
   function updateGridLines() {
     svg.selectAll('.grid').remove();
-    
-    // Linhas de grade horizontais - COMMENTED OUT
-    /*
-    svg.append('g').attr('class','grid')
-      .call(d3.axisLeft(yScale)
-        .ticks((globalYMax-globalYMin)/10)
-        .tickSize(-CONFIG.width + CONFIG.margin.left + CONFIG.margin.right)
-        .tickFormat(''))
-      .selectAll('line')
-      .attr('stroke','#e0e0e0');
-    */
-    
-    // Linhas de grade verticais - COMMENTED OUT
-    /*
-    svg.append('g').attr('class','grid')
-      .attr('transform',`translate(0,${CONFIG.height - CONFIG.margin.top - CONFIG.margin.bottom})`)
-      .call(d3.axisBottom(xScale)
-        .tickValues([500,1000,2000,4000,8000,16000,32000,64000,128000])
-        .tickSize(-CONFIG.height + CONFIG.margin.top + CONFIG.margin.bottom)
-        .tickFormat(''))
-      .selectAll('line')
-      .attr('stroke','#e0e0e0');
-    */
   }
 
   // Atualizar pontos de dados
@@ -349,7 +456,8 @@
         .on('drag', dragged)
         .on('end', dragended))
       .on('mouseover', showTooltip)
-      .on('mouseout', hideTooltip);
+      .on('mouseout', hideTooltip)
+      .on('click', (event, d) => selectCountry(d.country));
     
     // Atualizar todos os pontos
     enter.merge(pts)
@@ -357,39 +465,116 @@
       .attr('cx', d => xScale(d.gdp))
       .attr('cy', d => yScale(d.lex))
       .attr('r', CONFIG.pointRadius)
-      .attr('opacity', CONFIG.pointOpacity)
-      .attr('fill', CONFIG.pointColor);
+      .attr('opacity', d => selectedCountry ? (d.country === selectedCountry ? 1 : 0.1) : CONFIG.pointOpacity)
+      .attr('fill', CONFIG.pointColor)
+      .attr('stroke', '#fff')
+      .attr('stroke-width', 1);
   }
 
   // Mostrar tooltip
   function showTooltip(event, d) {
-    d3.select(event.currentTarget)
-      .attr('stroke', CONFIG.pointHighlightStroke)
-      .attr('stroke-width', 1.5);
+    const point = d3.select(event.currentTarget);
     
-    // Get element's position relative to viewport
+    // Aplicar efeito de hover
+    point
+      .transition().duration(150)
+      .attr('r', CONFIG.pointRadius * CONFIG.hoverScale)
+      .attr('stroke', CONFIG.hoverStrokeColor)
+      .attr('stroke-width', CONFIG.hoverStrokeWidth)
+      .raise(); // Trazer para frente
+    
+    // Calcular posição do tooltip
     const rect = event.currentTarget.getBoundingClientRect();
-    
-    // Calculate position relative to the document
     const targetX = rect.left + rect.width / 2 + window.scrollX;
     const targetY = rect.top + window.scrollY;
+    
+    // Calcular posição do tooltip para evitar sair da tela
+    const tooltipWidth = 200; // Estimativa da largura do tooltip
+    const tooltipHeight = 100; // Estimativa da altura do tooltip
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    
+    let tooltipX = targetX;
+    let tooltipY = targetY - tooltipHeight - 10;
+    
+    // Ajustar posição horizontal se necessário
+    if (targetX + tooltipWidth/2 > windowWidth) {
+      tooltipX = windowWidth - tooltipWidth/2;
+    } else if (targetX - tooltipWidth/2 < 0) {
+      tooltipX = tooltipWidth/2;
+    }
+    
+    // Ajustar posição vertical se necessário
+    if (targetY - tooltipHeight - 10 < 0) {
+      tooltipY = targetY + 20;
+    }
 
+    // Atualizar tooltip com informações do país
     tooltip.style('opacity', 0.9)
       .html(
-        `<strong>${d.country}</strong><br/>` +
-        `Ano: ${d.year}<br/>` +
-        `PIB: ${d3.format(',')(d.gdp)}<br/>` +
-        `Expectativa de Vida: ${d.lex.toFixed(1)}<br/>`
+        `<div>Continente: ${d.continent}</div>` +
+        `<div>Ano: ${d.year}</div>` +
+        `<div>PIB: $${d3.format(',')(d.gdp)}</div>` +
+        `<div>Expectativa de Vida: ${d.lex.toFixed(1)} anos</div>`
       )
-      // Position the tooltip using the calculated element position
-      .style('left', `${targetX}px`) 
-      .style('top', `${targetY}px`);
+      .style('left', `${tooltipX}px`) 
+      .style('top', `${tooltipY}px`);
+
+    // Remover labels existentes
+    svg.selectAll('.hover-label').remove();
+
+    // Criar novo label
+    const labelGroup = svg.append('g')
+      .attr('class', 'hover-label')
+      .attr('transform', `translate(${xScale(d.gdp)},${yScale(d.lex)})`);
+
+    // Adicionar fundo branco para melhor legibilidade
+    labelGroup.append('rect')
+      .attr('x', -4)
+      .attr('y', -30)
+      .attr('width', 120)
+      .attr('height', 30)
+      .attr('rx', 4)
+      .attr('fill', 'white')
+      .attr('stroke', '#ddd')
+      .attr('stroke-width', 1);
+
+    // Adicionar nome do país
+    labelGroup.append('text')
+      .attr('x', 0)
+      .attr('y', -15)
+      .attr('class', 'label-text')
+      .attr('fill', '#333')
+      .attr('font-size', '10')
+      .attr('font-weight', 'bold')
+      .text(d.country);
+
+    // Adicionar valores
+    labelGroup.append('text')
+      .attr('x', 0)
+      .attr('y', -2)
+      .attr('class', 'label-value')
+      .attr('fill', '#666')
+      .attr('font-size', '9')
+      .text(`$${d3.format(',')(d.gdp)} | ${d.lex.toFixed(1)} anos`);
   }
 
   // Esconder tooltip
   function hideTooltip(event) {
-    d3.select(event.currentTarget).attr('stroke', null);
+    const point = d3.select(event.currentTarget);
+    
+    // Remover efeito de hover
+    point
+      .transition().duration(150)
+      .attr('r', CONFIG.pointRadius)
+      .attr('stroke', '#fff')
+      .attr('stroke-width', 1);
+    
+    // Esconder tooltip
     tooltip.style('opacity', 0);
+
+    // Remover label
+    svg.selectAll('.hover-label').remove();
   }
 
   // Alternar reprodução automática
@@ -406,6 +591,14 @@
     } else {
       clearInterval(playInterval);
     }
+  }
+
+  // Função para voltar no tempo
+  function rewind() {
+    const i = years.indexOf(selectedYear);
+    selectedYear = years[(i - 1 + years.length) % years.length];
+    yearSlider.value = selectedYear;
+    updatePlot(selectedYear);
   }
 
   // Desenhar subgráficos para a evolução histórica de um país
@@ -465,7 +658,7 @@
         .attr('fill', 'currentColor')
         .style('text-anchor', 'middle')
         .style('font-size', '0.8em')
-        .text('PIB per Capita');
+        .text('PIB per Capita (USD)');
 
     // Adicionar linha ao gráfico de PIB
     gdpSvg.append('path')
@@ -529,7 +722,7 @@
         .attr('fill', 'currentColor')
         .style('text-anchor', 'middle')
         .style('font-size', '0.8em')
-        .text('Expectativa de Vida');
+        .text('Expectativa de Vida (Anos)');
 
     // Adicionar linha ao gráfico de expectativa de vida
     lexSvg.append('path')
@@ -561,6 +754,12 @@
       .style('font-size', '0.9em')
       .style('font-weight', 'bold')
       .text(`Expectativa de Vida (${countryHistory[0].country})`);
+  }
+
+  // Função para alternar a visibilidade dos labels
+  function toggleLabels() {
+    showLabels = !showLabels;
+    updateCountryLabels();
   }
 
   // Inicialização quando o componente é montado
@@ -615,6 +814,17 @@
 <div class="visualization-container">
   <h2>PIB vs. Expectativa de Vida Mundial</h2>
   
+  <div class="description">
+    <p>Esta visualização interativa permite explorar a relação entre o PIB per capita e a expectativa de vida dos países ao longo do tempo. Você pode:</p>
+    <ul>
+      <li>Usar a barra de pesquisa para encontrar países específicos (separe múltiplos países com espaço)</li>
+      <li>Arrastar os pontos para ver a trajetória histórica de cada país</li>
+      <li>Usar os controles de tempo para avançar ou retroceder nos anos</li>
+      <li>Visualizar estatísticas detalhadas nos gráficos auxiliares</li>
+      <li>Passar o mouse sobre os pontos para ver informações detalhadas</li>
+    </ul>
+  </div>
+  
   <div class="stats-panel">
     <div class="stat-box">
       <span class="stat-value">{totalCountries}</span>
@@ -630,7 +840,20 @@
     </div>
   </div>
   
+  <div class="search-container">
+    <input
+      type="text"
+      placeholder="Buscar país..."
+      bind:value={searchInput}
+      on:input={e => filterCountries(e.target.value)}
+      class="search-input"
+    />
+  </div>
+  
   <div class="controls">
+    <button on:click={rewind} class="control-button">
+      ⏪ Voltar
+    </button>
     <button on:click={togglePlay} class="control-button">
       {playing ? '⏸️ Pausar' : '▶️ Reproduzir'}
     </button>
@@ -660,6 +883,29 @@
       <svg bind:this={lexPlot}></svg>
     </div>
   </div>
+
+  <div class="legend">
+    <div class="legend-item">
+      <span class="legend-color" style="background-color: #d73027"></span>
+      <span class="legend-label">África</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-color" style="background-color: #4575b4"></span>
+      <span class="legend-label">Américas</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-color" style="background-color: #2e7d32"></span>
+      <span class="legend-label">Ásia</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-color" style="background-color: #6a1b9a"></span>
+      <span class="legend-label">Europa</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-color" style="background-color: #e65100"></span>
+      <span class="legend-label">Oceania</span>
+    </div>
+  </div>
 </div>
 
 <style>
@@ -675,6 +921,25 @@
     margin: 0;
     font-size: 1.4em;
     color: #333;
+  }
+
+  .description {
+    max-width: 800px;
+    margin: 1em auto;
+    padding: 1em;
+    background: #f5f5f5;
+    border-radius: 8px;
+    font-size: 0.9em;
+    line-height: 1.5;
+  }
+
+  .description ul {
+    margin: 0.5em 0;
+    padding-left: 1.5em;
+  }
+
+  .description li {
+    margin: 0.3em 0;
   }
   
   .main-chart {
@@ -692,7 +957,7 @@
   }
   
   :global(.axis-label) {
-    font-size: 0.9em;
+    font-size: 1.1em;
     font-weight: bold;
   }
   
@@ -746,19 +1011,6 @@
     text-align: center;
   }
   
-  .tooltip {
-    position: absolute;
-    background: rgba(0,0,0,0.8);
-    color: #fff;
-    padding: 8px 10px;
-    border-radius: 4px;
-    pointer-events: none;
-    font-size: 0.85em;
-    z-index: 1000;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    transform: translate(-50%, -110%);
-    transition: opacity 0.2s;
-  }
   
   .subplots {
     display: flex;
@@ -812,5 +1064,75 @@
     align-items: flex-start;
     gap: 20px;
     margin-top: 0.2em;
+  }
+
+  .search-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1em;
+    margin: 1em 0;
+  }
+
+  .search-input {
+    width: 300px;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 0.9em;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: #4c78a8;
+    box-shadow: 0 0 0 2px rgba(76, 120, 168, 0.2);
+  }
+
+  .legend {
+    display: flex;
+    justify-content: center;
+    gap: 1.5em;
+    margin: 1em 0;
+    flex-wrap: wrap;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 1px solid #fff;
+  }
+
+  .legend-label {
+    font-size: 0.8em;
+    color: #333;
+    font-weight: 500;
+  }
+
+  :global(.global-tooltip) {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.95);
+    color: #333;
+    padding: 12px;
+    border-radius: 6px;
+    pointer-events: none;
+    font-size: 0.85em;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    border: 1px solid #ddd;
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
   }
 </style>
