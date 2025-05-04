@@ -109,7 +109,7 @@
     'Micronesia': 'Oceania', 'Nauru': 'Oceania', 'New Zealand': 'Oceania', 'Palau': 'Oceania',
     'Papua New Guinea': 'Oceania', 'Samoa': 'Oceania', 'Solomon Islands': 'Oceania', 'Tonga': 'Oceania',
     'Tuvalu': 'Oceania', 'Vanuatu': 'Oceania',
-    'Micronesia, Fed. Sts': 'Oceania',
+    'Micronesia, Fed. Sts.': 'Oceania',
   };
 
   // Elementos do DOM
