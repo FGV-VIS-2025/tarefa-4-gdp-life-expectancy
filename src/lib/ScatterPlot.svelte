@@ -66,7 +66,7 @@
     'Ecuador': 'Americas', 'El Salvador': 'Americas', 'Guatemala': 'Americas', 'Haiti': 'Americas',
     'Honduras': 'Americas', 'Jamaica': 'Americas', 'Mexico': 'Americas', 'Nicaragua': 'Americas',
     'Panama': 'Americas', 'Paraguay': 'Americas', 'Peru': 'Americas', 'Trinidad and Tobago': 'Americas',
-    'Uruguay': 'Americas', 'Venezuela': 'Americas', 'Canada': 'Americas', 'United States': 'Americas',
+    'Uruguay': 'Americas', 'Venezuela': 'Americas', 'Canada': 'Americas', 'USA': 'Americas',
 
     // Ásia
     'Afghanistan': 'Asia', 'Armenia': 'Asia', 'Azerbaijan': 'Asia', 'Bahrain': 'Asia',
@@ -93,7 +93,7 @@
     'Montenegro': 'Europe', 'Netherlands': 'Europe', 'Norway': 'Europe', 'Poland': 'Europe',
     'Portugal': 'Europe', 'Romania': 'Europe', 'Russia': 'Europe', 'Serbia': 'Europe',
     'Slovakia': 'Europe', 'Slovenia': 'Europe', 'Spain': 'Europe', 'Sweden': 'Europe',
-    'Switzerland': 'Europe', 'Ukraine': 'Europe', 'United Kingdom': 'Europe',
+    'Switzerland': 'Europe', 'Ukraine': 'Europe', 'UK': 'Europe','Monaco':'Europe',
 
     // Oceania
     'Australia': 'Oceania', 'Fiji': 'Oceania', 'Kiribati': 'Oceania', 'Marshall Islands': 'Oceania',
@@ -275,9 +275,10 @@
         .attr('class', 'axis-label')
         .attr('transform', 'rotate(-90)')
         .attr('x', -(CONFIG.height - CONFIG.margin.top - CONFIG.margin.bottom) / 2)
-        .attr('y', -CONFIG.margin.left + 15)
+        .attr('y', -CONFIG.margin.left + 12)
         .attr('fill', 'currentColor')
         .style('text-anchor', 'middle')
+        .style('font-size', '0.8em')
         .text('Expectativa de Vida (Anos)');
   }
 
@@ -652,7 +653,7 @@
       .append('text')
         .attr('class', 'axis-label')
         .attr('x', width / 2)
-        .attr('y', margin.bottom - 5)
+        .attr('y', margin.bottom * 0.75)
         .attr('fill', 'currentColor')
         .style('text-anchor', 'middle')
         .style('font-size', '0.8em')
@@ -661,8 +662,8 @@
     gdpSvg.append('g')
       .attr('transform', `translate(${margin.left},0)`)
       .call(d3.axisLeft(yGDP)
-        .ticks(Math.max(2, Math.ceil(d3.max(countryHistory, d => d.gdp) / 20000)))
-        .tickFormat(d => d >= 10000 ? d3.format('.0s')(d) : d3.format(',')(d)))
+        .ticks(5)
+        .tickFormat(d => d / 1000))
       .append('text')
         .attr('class', 'axis-label')
         .attr('transform', 'rotate(-90)')
@@ -671,7 +672,7 @@
         .attr('fill', 'currentColor')
         .style('text-anchor', 'middle')
         .style('font-size', '0.8em')
-        .text('PIB per Capita (USD)');
+        .text('PIB per Capita (Milhares USD)');
 
     // Adicionar linha ao gráfico de PIB
     gdpSvg.append('path')
@@ -716,7 +717,7 @@
       .append('text')
         .attr('class', 'axis-label')
         .attr('x', width / 2)
-        .attr('y', margin.bottom - 5)
+        .attr('y', margin.bottom * 0.75)
         .attr('fill', 'currentColor')
         .style('text-anchor', 'middle')
         .style('font-size', '0.8em')
