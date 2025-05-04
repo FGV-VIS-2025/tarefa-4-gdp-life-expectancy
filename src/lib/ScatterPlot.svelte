@@ -20,7 +20,7 @@
         case 'Americas': return '#4575b4'; 
         case 'Asia': return '#2e7d32';
         case 'Europe': return '#6a1b9a'; 
-        case 'Oceania': return '#e65100'; 
+        case 'Oceania': return '#fdd835';
         default: return '#666';
       }
     },
@@ -1030,7 +1030,7 @@
       <span class="legend-label">Europa</span>
     </div>
     <div class="legend-item">
-      <span class="legend-color" style="background-color: #e65100"></span>
+      <span class="legend-color" style="background-color: #fdd835"></span>
       <span class="legend-label">Oceania</span>
     </div>
   </div>
