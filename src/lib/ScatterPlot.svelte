@@ -81,7 +81,7 @@
     'South Korea': 'Asia', 'Sri Lanka': 'Asia', 'Syria': 'Asia', 'Taiwan': 'Asia',
     'Tajikistan': 'Asia', 'Thailand': 'Asia', 'Timor-Leste': 'Asia', 'Turkey': 'Asia',
     'Turkmenistan': 'Asia', 'United Arab Emirates': 'Asia', 'Uzbekistan': 'Asia', 'Vietnam': 'Asia',
-    'Yemen': 'Asia',
+    'Yemen': 'Asia','Hong Kong, China':'Asia',
 
     // Europa
     'Albania': 'Europe', 'Austria': 'Europe', 'Belarus': 'Europe', 'Belgium': 'Europe',
@@ -618,6 +618,18 @@
   // Desenhar subgráficos para a evolução histórica de um país
   function drawSubplots(countryHistory) {
     const { width, height, margin } = CONFIG.subplotSize;
+    const predictionStartYear = 2026;
+
+    // Separar dados históricos e de previsão
+    const historicalData = countryHistory.filter(d => d.year < predictionStartYear);
+    // Incluir o último ano histórico no início da previsão para conectar as linhas
+    const lastHistoricalPoint = historicalData[historicalData.length - 1];
+    const predictedData = countryHistory.filter(d => d.year >= predictionStartYear);
+    if (lastHistoricalPoint && predictedData.length > 0) {
+        predictedData.unshift(lastHistoricalPoint);
+    }
+
+    const hasPrediction = predictedData.length > 1; // Precisa de pelo menos 2 pontos para uma linha
 
     // Escala X para anos
     const x = d3.scaleLinear()
@@ -632,16 +644,16 @@
     // Escala Y para expectativa de vida
     const yLex = d3.scaleLinear()
       .domain([
-        Math.max(0, d3.min(countryHistory, d => d.lex) - 5), 
+        Math.max(0, d3.min(countryHistory, d => d.lex) - 5),
         Math.min(100, d3.max(countryHistory, d => d.lex) + 5)
-      ])
+      ]).nice() // Use nice() para arredondar o domínio
       .range([height - margin.bottom, margin.top]);
 
     // Limpar gráficos existentes
     d3.select(gdpPlot).selectAll('*').remove();
     d3.select(lexPlot).selectAll('*').remove();
 
-    // Criar gráfico de PIB
+    // --- Gráfico de PIB ---
     const gdpSvg = d3.select(gdpPlot)
       .attr('width', width)
       .attr('height', height);
@@ -651,50 +663,97 @@
       .attr('transform', `translate(0,${height - margin.bottom})`)
       .call(d3.axisBottom(x).ticks(5).tickFormat(CONFIG.yearTickFormat))
       .append('text')
-        .attr('class', 'axis-label')
+        .attr('class', 'axis-label subplot-axis-label')
         .attr('x', width / 2)
         .attr('y', margin.bottom * 0.75)
         .attr('fill', 'currentColor')
-        .style('text-anchor', 'middle')
-        .style('font-size', '0.8em')
         .text('Ano');
-    
+
     gdpSvg.append('g')
       .attr('transform', `translate(${margin.left},0)`)
       .call(d3.axisLeft(yGDP)
         .ticks(5)
-        .tickFormat(d => d / 1000))
+        .tickFormat(d => d / 1000)) // Milhares
       .append('text')
-        .attr('class', 'axis-label')
+        .attr('class', 'axis-label subplot-axis-label')
         .attr('transform', 'rotate(-90)')
-        .attr('x', -(height - margin.bottom - margin.top) / 2)
+        .attr('x', -(height - margin.top - margin.bottom) / 2)
         .attr('y', -margin.left + 12)
         .attr('fill', 'currentColor')
-        .style('text-anchor', 'middle')
-        .style('font-size', '0.8em')
-        .text('PIB per Capita (Milhares USD)');
+        .text('PIB (Milhares USD)');
 
-    // Adicionar linha ao gráfico de PIB
-    gdpSvg.append('path')
-      .datum(countryHistory)
-      .attr('fill', 'none')
-      .attr('stroke', CONFIG.lineColors.gdp)
-      .attr('stroke-width', 2)
-      .attr('d', d3.line()
-        .x(d => x(d.year))
-        .y(d => yGDP(d.gdp))
-      );
+    // Adicionar linha histórica ao gráfico de PIB
+    if (historicalData.length > 0) {
+      gdpSvg.append('path')
+        .datum(historicalData)
+        .attr('fill', 'none')
+        .attr('stroke', CONFIG.lineColors.gdp)
+        .attr('stroke-width', 2)
+        .attr('d', d3.line()
+          .x(d => x(d.year))
+          .y(d => yGDP(d.gdp))
+        );
+    }
 
-    // Adicionar pontos de dados ao gráfico de PIB
-    gdpSvg.selectAll('.gdp-point')
-      .data(countryHistory)
+    // Adicionar linha de previsão ao gráfico de PIB
+    if (hasPrediction) {
+      gdpSvg.append('path')
+        .datum(predictedData)
+        .attr('fill', 'none')
+        .attr('stroke', CONFIG.lineColors.gdp)
+        .attr('stroke-width', 2)
+        .attr('stroke-opacity', 0.5) // Opacidade reduzida
+        .attr('d', d3.line()
+          .x(d => x(d.year))
+          .y(d => yGDP(d.gdp))
+        );
+    }
+
+    // Adicionar pontos de dados históricos ao gráfico de PIB
+    gdpSvg.selectAll('.gdp-point-hist')
+      .data(historicalData)
       .enter()
       .append('circle')
-      .attr('class', 'gdp-point')
+      .attr('class', 'gdp-point-hist')
       .attr('cx', d => x(d.year))
       .attr('cy', d => yGDP(d.gdp))
       .attr('r', 2)
       .attr('fill', CONFIG.lineColors.gdp);
+
+    // Adicionar pontos de dados de previsão ao gráfico de PIB
+    if (hasPrediction) {
+      gdpSvg.selectAll('.gdp-point-pred')
+        // Ignorar o primeiro ponto (que é o último histórico)
+        .data(predictedData.slice(1))
+        .enter()
+        .append('circle')
+        .attr('class', 'gdp-point-pred')
+        .attr('cx', d => x(d.year))
+        .attr('cy', d => yGDP(d.gdp))
+        .attr('r', 2)
+        .attr('fill', CONFIG.lineColors.gdp)
+        .attr('fill-opacity', 0.5); // Opacidade reduzida
+    }
+
+    // Adicionar anotação de previsão (GDP)
+    if (hasPrediction) {
+        const annotationX = x(predictionStartYear);
+        gdpSvg.append('line')
+            .attr('x1', annotationX)
+            .attr('x2', annotationX)
+            .attr('y1', margin.top)
+            .attr('y2', height - margin.bottom)
+            .attr('stroke', '#aaa')
+            .attr('stroke-dasharray', '3,3')
+            .attr('stroke-width', 1);
+        gdpSvg.append('text')
+            .attr('x', annotationX + 5)
+            .attr('y', margin.top + 10)
+            .attr('fill', '#666')
+            .style('font-size', '0.7em')
+            .text('Previsão →');
+    }
+
 
     // Adicionar título ao gráfico de PIB
     gdpSvg.append('text')
@@ -705,7 +764,7 @@
       .style('font-weight', 'bold')
       .text(`PIB per Capita (${countryHistory[0].country})`);
 
-    // Criar gráfico de expectativa de vida
+    // --- Gráfico de Expectativa de Vida ---
     const lexSvg = d3.select(lexPlot)
       .attr('width', width)
       .attr('height', height);
@@ -715,50 +774,98 @@
       .attr('transform', `translate(0,${height - margin.bottom})`)
       .call(d3.axisBottom(x).ticks(5).tickFormat(CONFIG.yearTickFormat))
       .append('text')
-        .attr('class', 'axis-label')
+        .attr('class', 'axis-label subplot-axis-label')
         .attr('x', width / 2)
         .attr('y', margin.bottom * 0.75)
         .attr('fill', 'currentColor')
-        .style('text-anchor', 'middle')
-        .style('font-size', '0.8em')
         .text('Ano');
-    
+
     lexSvg.append('g')
       .attr('transform', `translate(${margin.left},0)`)
       .call(d3.axisLeft(yLex)
-        .ticks(Math.max(2, Math.round((d3.max(countryHistory, d => d.lex) - d3.min(countryHistory, d => d.lex)) / 20)))
+        // Ajustar número de ticks para evitar sobreposição
+        .ticks(Math.max(2, Math.round((yLex.domain()[1] - yLex.domain()[0]) / 10)))
       )
       .append('text')
-        .attr('class', 'axis-label')
+        .attr('class', 'axis-label subplot-axis-label')
         .attr('transform', 'rotate(-90)')
-        .attr('x', -(height - margin.bottom - margin.top) / 2)
+        .attr('x', -(height - margin.top - margin.bottom) / 2)
         .attr('y', -margin.left + 12)
         .attr('fill', 'currentColor')
-        .style('text-anchor', 'middle')
-        .style('font-size', '0.8em')
         .text('Expectativa de Vida (Anos)');
 
-    // Adicionar linha ao gráfico de expectativa de vida
-    lexSvg.append('path')
-      .datum(countryHistory)
-      .attr('fill', 'none')
-      .attr('stroke', CONFIG.lineColors.lex)
-      .attr('stroke-width', 2)
-      .attr('d', d3.line()
-        .x(d => x(d.year))
-        .y(d => yLex(d.lex))
-      );
+    // Adicionar linha histórica ao gráfico de expectativa de vida
+    if (historicalData.length > 0) {
+      lexSvg.append('path')
+        .datum(historicalData)
+        .attr('fill', 'none')
+        .attr('stroke', CONFIG.lineColors.lex)
+        .attr('stroke-width', 2)
+        .attr('d', d3.line()
+          .x(d => x(d.year))
+          .y(d => yLex(d.lex))
+        );
+    }
 
-    // Adicionar pontos de dados ao gráfico de expectativa de vida
-    lexSvg.selectAll('.lex-point')
-      .data(countryHistory)
+    // Adicionar linha de previsão ao gráfico de expectativa de vida
+    if (hasPrediction) {
+      lexSvg.append('path')
+        .datum(predictedData)
+        .attr('fill', 'none')
+        .attr('stroke', CONFIG.lineColors.lex)
+        .attr('stroke-width', 2)
+        .attr('stroke-opacity', 0.5) // Opacidade reduzida
+        .attr('d', d3.line()
+          .x(d => x(d.year))
+          .y(d => yLex(d.lex))
+        );
+    }
+
+    // Adicionar pontos de dados históricos ao gráfico de expectativa de vida
+    lexSvg.selectAll('.lex-point-hist')
+      .data(historicalData)
       .enter()
       .append('circle')
-      .attr('class', 'lex-point')
+      .attr('class', 'lex-point-hist')
       .attr('cx', d => x(d.year))
       .attr('cy', d => yLex(d.lex))
       .attr('r', 2)
       .attr('fill', CONFIG.lineColors.lex);
+
+    // Adicionar pontos de dados de previsão ao gráfico de expectativa de vida
+    if (hasPrediction) {
+      lexSvg.selectAll('.lex-point-pred')
+        // Ignorar o primeiro ponto (que é o último histórico)
+        .data(predictedData.slice(1))
+        .enter()
+        .append('circle')
+        .attr('class', 'lex-point-pred')
+        .attr('cx', d => x(d.year))
+        .attr('cy', d => yLex(d.lex))
+        .attr('r', 2)
+        .attr('fill', CONFIG.lineColors.lex)
+        .attr('fill-opacity', 0.5); // Opacidade reduzida
+    }
+
+    // Adicionar anotação de previsão (LEX)
+    if (hasPrediction) {
+        const annotationX = x(predictionStartYear);
+        lexSvg.append('line')
+            .attr('x1', annotationX)
+            .attr('x2', annotationX)
+            .attr('y1', margin.top)
+            .attr('y2', height - margin.bottom)
+            .attr('stroke', '#aaa')
+            .attr('stroke-dasharray', '3,3')
+            .attr('stroke-width', 1);
+        lexSvg.append('text')
+            .attr('x', annotationX + 5)
+            .attr('y', margin.top + 10)
+            .attr('fill', '#666')
+            .style('font-size', '0.7em')
+            .text('Previsão →');
+    }
+
 
     // Adicionar título ao gráfico de expectativa de vida
     lexSvg.append('text')
@@ -1214,5 +1321,10 @@
     background: #4c78a8;
     color: white;
     border-color: #4c78a8;
+  }
+
+  :global(.subplot-axis-label) {
+    font-size: 0.8em;
+    text-anchor: middle;
   }
 </style>
