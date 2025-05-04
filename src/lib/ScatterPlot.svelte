@@ -118,6 +118,11 @@
   let playing = false;
   let playInterval;
   let selectedCountry = null;
+
+  function onDrag(country, year) {
+    draggedYear = year;
+    selectedCountry = country;
+  }
   let filteredCountries = [];
   let showLabels = false;
   let countryLabels = [];
@@ -135,12 +140,23 @@
   
   // Variáveis para interação de arrasto
   let draggedCountry = null;
+  let draggedYear = null;
   let currentClosestHighlightPoint = null;
   
   // Estatísticas para exibir
   let totalCountries = 0;
   let averageLifeExpectancy = 0;
   let averageGDP = 0;
+
+  function yVida(country, year) {
+    const data = allData.find(d => d.country === country && d.year === year);
+    return data ? yScale(data.lex) : 0;
+  }
+
+  function yPib(country, year) {
+    const data = allData.find(d => d.country === country && d.year === year);
+    return data ? yScale(data.gdp) : 0;
+  }
 
   // Função para processar os dados recebidos
   function processData(data) {
@@ -171,7 +187,7 @@
       );
       // Se houver apenas um país nos resultados, selecioná-lo automaticamente
       if (filteredCountries.length === 1) {
-        selectCountry(filteredCountries[0].country);
+        selectCountry(filteredCountries[0].country, filteredCountries[0].year);
       } else {
         selectedCountry = null;
       }
@@ -192,14 +208,25 @@
   }
 
   // Função para selecionar um país
-  function selectCountry(country) {
+  function selectCountry(country, year) {
     selectedCountry = country;
+    selectedYear = year;
     const countryHistory = allData.filter(p => p.country === country && p.gdp > 0 && p.lex > 0);
     drawSubplots(countryHistory);
-    
-    // Destacar o país selecionado
+
     svg.selectAll('circle.data-point')
-      .attr('opacity', d => d.country === country ? 1 : 0.1);
+      .transition().duration(200).ease(CONFIG.transitionEase)
+      .attr('opacity', d => (d.country === country && d.year === year) ? 1 : 0.1)
+      .attr('stroke', '#fff')
+      .attr('stroke-width', 1)
+      .attr('fill', d => CONFIG.pointColor(d));
+
+    svg.selectAll('circle.data-point')
+      .filter(d => d.country === country && d.year === year)
+      .transition().duration(200).ease(CONFIG.transitionEase)
+      .attr('stroke', '#000')
+      .attr('stroke-width', 2)
+      .attr('fill', '#fff');
   }
 
   // Inicializar os gráficos D3
@@ -327,8 +354,8 @@
       .attr("class", "highlight-point")
       .attr("cx", p => xScale(p.gdp))
       .attr("cy", p => yScale(p.lex))
-      .attr("r", 2) // Raio menor
-      .attr("fill", "#aaa") // Cor cinza
+      .attr("r", 2)
+      .attr("fill", "#aaa")
       .attr("opacity", 0.8)
       .style("pointer-events", "none");
   }
@@ -358,6 +385,52 @@
         .transition().duration(100).ease(CONFIG.transitionEase)
         .attr('cx', xScale(closestPoint.gdp))
         .attr('cy', yScale(closestPoint.lex));
+      
+      // Atualizar subplots para o ano selecionado
+      selectedYear = closestPoint.year;
+      yearSlider.value = selectedYear;
+      
+      // Atualizar pontos de destaque nos subplots usando as escalas corretas
+      const gdpSvg = d3.select(gdpPlot);
+      const lexSvg = d3.select(lexPlot);
+      gdpSvg.selectAll('.highlight-point').remove();
+      lexSvg.selectAll('.highlight-point').remove();
+
+      // Obter as escalas dos subplots
+      const { width, height, margin } = CONFIG.subplotSize;
+      const countryHistory = allData.filter(p => p.country === draggedCountry && p.gdp > 0 && p.lex > 0);
+      const x = d3.scaleLinear()
+        .domain(d3.extent(countryHistory, d => d.year))
+        .range([margin.left, width - margin.right]);
+      const yGDP = d3.scaleLinear()
+        .domain([0, d3.max(countryHistory, d => d.gdp) * 1.1]).nice()
+        .range([height - margin.bottom, margin.top]);
+      const yLex = d3.scaleLinear()
+        .domain([
+          Math.max(0, d3.min(countryHistory, d => d.lex) - 5),
+          Math.min(100, d3.max(countryHistory, d => d.lex) + 5)
+        ]).nice()
+        .range([height - margin.bottom, margin.top]);
+
+      // Adicionar ponto de destaque no gráfico de PIB
+      gdpSvg.append('circle')
+        .attr('class', 'highlight-point')
+        .attr('cx', x(closestPoint.year))
+        .attr('cy', yGDP(closestPoint.gdp))
+        .attr('r', 4)
+        .attr('fill', 'black')
+        .attr('stroke', 'white')
+        .attr('stroke-width', 1.5);
+
+      // Adicionar ponto de destaque no gráfico de expectativa de vida
+      lexSvg.append('circle')
+        .attr('class', 'highlight-point')
+        .attr('cx', x(closestPoint.year))
+        .attr('cy', yLex(closestPoint.lex))
+        .attr('r', 4)
+        .attr('fill', 'black')
+        .attr('stroke', 'white')
+        .attr('stroke-width', 1.5);
     }
   }
 
@@ -382,14 +455,6 @@
 
     draggedCountry = null;
     currentClosestHighlightPoint = null;
-
-    // Se for um ano diferente, atualizar para esse ano
-    if (finalPoint && selectedYear !== finalPoint.year) {
-      selectedYear = finalPoint.year;
-      yearSlider.value = selectedYear;
-    }
-    
-    updatePlot(selectedYear);
   }
 
   // Função para atualizar os labels dos países
@@ -470,7 +535,7 @@
         .on('end', dragended))
       .on('mouseover', showTooltip)
       .on('mouseout', hideTooltip)
-      .on('click', (event, d) => selectCountry(d.country));
+      .on('click', (event, d) => selectCountry(d.country, d.year));
     
     // Atualizar todos os pontos
     enter.merge(pts)
@@ -479,7 +544,7 @@
       .attr('cy', d => yScale(d.lex))
       .attr('r', CONFIG.pointRadius)
       .attr('opacity', d => selectedCountry ? (d.country === selectedCountry ? 1 : 0.1) : CONFIG.pointOpacity)
-      .attr('fill', CONFIG.pointColor)
+      .attr('fill', d => CONFIG.pointColor(d))
       .attr('stroke', '#fff')
       .attr('stroke-width', 1);
   }
@@ -615,7 +680,7 @@
       .domain([
         Math.max(0, d3.min(countryHistory, d => d.lex) - 5),
         Math.min(100, d3.max(countryHistory, d => d.lex) + 5)
-      ]).nice() // Use nice() para arredondar o domínio
+      ]).nice()
       .range([height - margin.bottom, margin.top]);
 
     // Limpar gráficos existentes
@@ -671,7 +736,7 @@
         .attr('fill', 'none')
         .attr('stroke', CONFIG.lineColors.gdp)
         .attr('stroke-width', 2)
-        .attr('stroke-opacity', 0.5) // Opacidade reduzida
+        .attr('stroke-opacity', 0.5)
         .attr('d', d3.line()
           .x(d => x(d.year))
           .y(d => yGDP(d.gdp))
@@ -692,7 +757,6 @@
     // Adicionar pontos de dados de previsão ao gráfico de PIB
     if (hasPrediction) {
       gdpSvg.selectAll('.gdp-point-pred')
-        // Ignorar o primeiro ponto (que é o último histórico)
         .data(predictedData.slice(1))
         .enter()
         .append('circle')
@@ -701,37 +765,8 @@
         .attr('cy', d => yGDP(d.gdp))
         .attr('r', 2)
         .attr('fill', CONFIG.lineColors.gdp)
-        .attr('fill-opacity', 0.5); // Opacidade reduzida
+        .attr('fill-opacity', 0.5);
     }
-
-    // Adicionar anotação de previsão (GDP)
-    if (hasPrediction) {
-        const annotationX = x(predictionStartYear);
-        gdpSvg.append('line')
-            .attr('x1', annotationX)
-            .attr('x2', annotationX)
-            .attr('y1', margin.top)
-            .attr('y2', height - margin.bottom)
-            .attr('stroke', '#aaa')
-            .attr('stroke-dasharray', '3,3')
-            .attr('stroke-width', 1);
-        gdpSvg.append('text')
-            .attr('x', annotationX + 5)
-            .attr('y', margin.top + 10)
-            .attr('fill', '#666')
-            .style('font-size', '0.7em')
-            .text('Previsão →');
-    }
-
-
-    // Adicionar título ao gráfico de PIB
-    gdpSvg.append('text')
-      .attr('x', width / 2)
-      .attr('y', margin.top * 0.8)
-      .attr('text-anchor', 'middle')
-      .style('font-size', '0.9em')
-      .style('font-weight', 'bold')
-      .text(`PIB per Capita (${countryHistory[0].country})`);
 
     // --- Gráfico de Expectativa de Vida ---
     const lexSvg = d3.select(lexPlot)
@@ -752,7 +787,6 @@
     lexSvg.append('g')
       .attr('transform', `translate(${margin.left},0)`)
       .call(d3.axisLeft(yLex)
-        // Ajustar número de ticks para evitar sobreposição
         .ticks(Math.max(2, Math.round((yLex.domain()[1] - yLex.domain()[0]) / 10)))
       )
       .append('text')
@@ -783,7 +817,7 @@
         .attr('fill', 'none')
         .attr('stroke', CONFIG.lineColors.lex)
         .attr('stroke-width', 2)
-        .attr('stroke-opacity', 0.5) // Opacidade reduzida
+        .attr('stroke-opacity', 0.5)
         .attr('d', d3.line()
           .x(d => x(d.year))
           .y(d => yLex(d.lex))
@@ -804,7 +838,6 @@
     // Adicionar pontos de dados de previsão ao gráfico de expectativa de vida
     if (hasPrediction) {
       lexSvg.selectAll('.lex-point-pred')
-        // Ignorar o primeiro ponto (que é o último histórico)
         .data(predictedData.slice(1))
         .enter()
         .append('circle')
@@ -813,7 +846,61 @@
         .attr('cy', d => yLex(d.lex))
         .attr('r', 2)
         .attr('fill', CONFIG.lineColors.lex)
-        .attr('fill-opacity', 0.5); // Opacidade reduzida
+        .attr('fill-opacity', 0.5);
+    }
+
+    // Adicionar pontos de destaque nos subplots
+    function updateHighlightPoints(year) {
+      const point = countryHistory.find(d => d.year === year);
+      if (!point) return;
+
+      // Remover pontos de destaque anteriores
+      gdpSvg.selectAll('.highlight-point').remove();
+      lexSvg.selectAll('.highlight-point').remove();
+
+      // Adicionar ponto de destaque no gráfico de PIB
+      gdpSvg.append('circle')
+        .attr('class', 'highlight-point')
+        .attr('cx', x(point.year))
+        .attr('cy', yGDP(point.gdp))
+        .attr('r', 4)
+        .attr('fill', 'black')
+        .attr('stroke', 'white')
+        .attr('stroke-width', 1.5);
+
+      // Adicionar ponto de destaque no gráfico de expectativa de vida
+      lexSvg.append('circle')
+        .attr('class', 'highlight-point')
+        .attr('cx', x(point.year))
+        .attr('cy', yLex(point.lex))
+        .attr('r', 4)
+        .attr('fill', 'black')
+        .attr('stroke', 'white')
+        .attr('stroke-width', 1.5);
+    }
+
+    // Atualizar pontos de destaque quando o ano mudar
+    $: if (selectedYear) {
+      updateHighlightPoints(selectedYear);
+    }
+
+    // Adicionar anotação de previsão (GDP)
+    if (hasPrediction) {
+        const annotationX = x(predictionStartYear);
+        gdpSvg.append('line')
+            .attr('x1', annotationX)
+            .attr('x2', annotationX)
+            .attr('y1', margin.top)
+            .attr('y2', height - margin.bottom)
+            .attr('stroke', '#aaa')
+            .attr('stroke-dasharray', '3,3')
+            .attr('stroke-width', 1);
+        gdpSvg.append('text')
+            .attr('x', annotationX + 5)
+            .attr('y', margin.top + 10)
+            .attr('fill', '#666')
+            .style('font-size', '0.7em')
+            .text('Previsão →');
     }
 
     // Adicionar anotação de previsão (LEX)
@@ -835,6 +922,14 @@
             .text('Previsão →');
     }
 
+    // Adicionar título ao gráfico de PIB
+    gdpSvg.append('text')
+      .attr('x', width / 2)
+      .attr('y', margin.top * 0.8)
+      .attr('text-anchor', 'middle')
+      .style('font-size', '0.9em')
+      .style('font-weight', 'bold')
+      .text(`PIB per Capita (${countryHistory[0].country})`);
 
     // Adicionar título ao gráfico de expectativa de vida
     lexSvg.append('text')
