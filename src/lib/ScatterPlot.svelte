@@ -7,7 +7,7 @@
   const CONFIG = {
     width: 800,
     height: 500,
-    margin: { top: 20, right: 30, bottom: 60, left: 60 },
+    margin: { top: 50, right: 30, bottom: 60, left: 60 },
     playSpeed: 200,
     transitionDuration: 300,
     transitionEase: d3.easeQuadOut,
@@ -1111,7 +1111,20 @@
   
   <div class="chart-area">
     <div class="main-chart">
-      <svg bind:this={svgElement}></svg>
+      <svg bind:this={svgElement}>
+        <text
+          x="50%"
+          y="35"
+          text-anchor="middle"
+          class="svg-main-title"
+        >
+          {#if selectedCountry}
+            PIB vs. Expectativa de Vida ({selectedCountry})
+          {:else}
+            PIB vs. Expectativa de Vida
+          {/if}
+        </text>
+      </svg>
       <div class="help-text">
         * Arraste um círculo para ver a trajetória histórica do país
       </div>
@@ -1406,5 +1419,13 @@
   :global(.subplot-axis-label) {
     font-size: 0.8em;
     text-anchor: middle;
+  }
+
+  .svg-main-title {
+    font-size: 1.3em;
+    font-weight: bold;
+    fill: #222;
+    pointer-events: none;
+    dominant-baseline: middle;
   }
 </style>
