@@ -489,88 +489,58 @@
   function showTooltip(event, d) {
     const point = d3.select(event.currentTarget);
     
-    // Aplicar efeito de hover
     point
+      .raise()
       .transition().duration(150)
       .attr('r', CONFIG.pointRadius * CONFIG.hoverScale)
       .attr('stroke', CONFIG.hoverStrokeColor)
-      .attr('stroke-width', CONFIG.hoverStrokeWidth)
-      .raise(); // Trazer para frente
+      .attr('stroke-width', CONFIG.hoverStrokeWidth);
     
-    // Calcular posição do tooltip
     const rect = event.currentTarget.getBoundingClientRect();
     const targetX = rect.left + rect.width / 2 + window.scrollX;
     const targetY = rect.top + window.scrollY;
     
-    // Calcular posição do tooltip para evitar sair da tela
-    const tooltipWidth = 200; // Estimativa da largura do tooltip
-    const tooltipHeight = 100; // Estimativa da altura do tooltip
+    tooltip.html(
+      `<div><strong>${d.country}</strong> (${d.year})</div>` + // Adicionado nome e ano para clareza
+      `<div><strong>Continente:</strong> ${d.continent}</div>` +
+      `<div><strong>PIB per Capita:</strong> ${d.gdp} USD</div>` + // Usar formato consistente
+      `<div><strong>Expectativa de Vida:</strong> ${CONFIG.lexValueFormat(d.lex)} anos</div>` // Usar formato consistente
+    );
+
+    const tooltipNode = tooltip.node();
+    if (!tooltipNode) {
+      return;
+    }
+    const tooltipWidth = tooltipNode.offsetWidth;
+    const tooltipHeight = tooltipNode.offsetHeight;
+
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
+    const margin = 10; 
+
+    let tooltipX = targetX - tooltipWidth / 2;
+    let tooltipY = targetY - tooltipHeight - margin; 
     
-    let tooltipX = targetX;
-    let tooltipY = targetY - tooltipHeight - 10;
-    
-    // Ajustar posição horizontal se necessário
-    if (targetX + tooltipWidth/2 > windowWidth) {
-      tooltipX = windowWidth - tooltipWidth/2;
-    } else if (targetX - tooltipWidth/2 < 0) {
-      tooltipX = tooltipWidth/2;
+    if (tooltipX < margin) {
+      tooltipX = margin;
+    } else if (tooltipX + tooltipWidth > windowWidth - margin) {
+      tooltipX = windowWidth - tooltipWidth - margin;
     }
     
-    // Ajustar posição vertical se necessário
-    if (targetY - tooltipHeight - 10 < 0) {
-      tooltipY = targetY + 20;
+    if (tooltipY < margin) {
+      tooltipY = targetY + margin + 15;
+      if (tooltipY + tooltipHeight > windowHeight - margin) {
+        tooltipY = windowHeight / 2 - tooltipHeight / 2; 
+      }
     }
 
-    // Atualizar tooltip com informações do país
-    tooltip.style('opacity', 0.9)
-      .html(
-        `<div>Continente: ${d.continent}</div>` +
-        `<div>Ano: ${d.year}</div>` +
-        `<div>PIB: $${d3.format(',')(d.gdp)}</div>` +
-        `<div>Expectativa de Vida: ${d.lex.toFixed(1)} anos</div>`
-      )
-      .style('left', `${tooltipX}px`) 
-      .style('top', `${tooltipY}px`);
 
-    // Remover labels existentes
+    tooltip
+      .style('left', `${tooltipX}px`)
+      .style('top', `${tooltipY}px`)
+      .style('opacity', 0.9);
+    
     svg.selectAll('.hover-label').remove();
-
-    // Criar novo label
-    const labelGroup = svg.append('g')
-      .attr('class', 'hover-label')
-      .attr('transform', `translate(${xScale(d.gdp)},${yScale(d.lex)})`);
-
-    // Adicionar fundo branco para melhor legibilidade
-    labelGroup.append('rect')
-      .attr('x', -4)
-      .attr('y', -30)
-      .attr('width', 120)
-      .attr('height', 30)
-      .attr('rx', 4)
-      .attr('fill', 'white')
-      .attr('stroke', '#ddd')
-      .attr('stroke-width', 1);
-
-    // Adicionar nome do país
-    labelGroup.append('text')
-      .attr('x', 0)
-      .attr('y', -15)
-      .attr('class', 'label-text')
-      .attr('fill', '#333')
-      .attr('font-size', '10')
-      .attr('font-weight', 'bold')
-      .text(d.country);
-
-    // Adicionar valores
-    labelGroup.append('text')
-      .attr('x', 0)
-      .attr('y', -2)
-      .attr('class', 'label-value')
-      .attr('fill', '#666')
-      .attr('font-size', '9')
-      .text(`$${d3.format(',')(d.gdp)} | ${d.lex.toFixed(1)} anos`);
   }
 
   // Esconder tooltip
@@ -913,7 +883,6 @@
       await tick(); // Aguardar próximo ciclo de renderização do Svelte
       updatePlot(selectedYear);
     } catch (error) {
-      console.error("Erro ao carregar dados:", error);
     }
   });
 
