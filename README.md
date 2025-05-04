@@ -64,12 +64,12 @@ Certamente a interatividade de arrastar a bolinha foi a mais trabalhosa para mim
 - **Construção de caixas com valores dinâmicos ao longo do tempo para expectativa de vida e PIB médio**  
   **Contribui para:** As caixas reforçam as tendências gerais ao destacar estatísticas centrais com valores atualizados conforme o tempo avança na animação. Ajudam o público a ancorar visualmente os dados numéricos sem sobrecarregar a visualização principal.
 
-### Leonardo Alexandre (9h)
+### Leonardo Alexandre (9h):
 
 - Criação dos subplots laterais (PIB per capita e Expectativa de Vida ao longo do tempo)
--- Implementação dos gráficos auxiliares que mostram a evolução histórica do país selecionado.
--- Integração dos subplots com a seleção e o arrasto do país no gráfico principal, garantindo que os subplots sejam atualizados em tempo real conforme a interação do usuário.
--- Sincronização visual dos marcadores nos subplots com o ponto selecionado/arrastado no gráfico principal.
+  - Implementação dos gráficos auxiliares que mostram a evolução histórica do país selecionado.
+  - Integração dos subplots com a seleção e o arrasto do país no gráfico principal, garantindo que os subplots sejam atualizados em tempo real conforme a interação do usuário.
+  - Sincronização visual dos marcadores nos subplots com o ponto selecionado/arrastado no gráfico principal.
 - Ajustes de layout e organização dos subplots para melhor visualização em diferentes tamanhos de tela.
 - Aprimoramento da experiência de usuário ao alternar entre países e ao reiniciar a visualização, garantindo que os subplots e o gráfico principal sejam limpos e retornem ao estado inicial ao clicar no botão “Reiniciar”.
 - Colaboração na construção e ajuste dos títulos dos gráficos e rótulos dos eixos, aprimorando a clareza e a comunicação visual da visualização.
