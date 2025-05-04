@@ -48,7 +48,7 @@ Fiz as seguintes contribuições para o trabalho em cerca de 10 - 15 horas:
 
 Certamente a interatividade de arrastar a bolinha foi a mais trabalhosa para mim, pois envolvia muitos updates em tempo real no estado da aplicação e sincronização com os gráficos auxiliares. Foi necessário lidar com eventos de mouse e garantir uma resposta fluida e precisa. No final, acredito que esse recurso se tornou um dos diferenciais da visualização e valeu o esforço.
 
-### Tomás:
+### Tomás (10h):
 - **Adição da funcionalidade de reprodução dos dados de análise ao longo dos anos e da função _rewind_**  
   **Contribui para:** Permite que o usuário observe a evolução temporal dos dados, facilitando a identificação de tendências e padrões ao longo do tempo. A função _rewind_ ajuda o usuário a revisar momentos específicos com clareza e fluidez.
 
@@ -64,7 +64,21 @@ Certamente a interatividade de arrastar a bolinha foi a mais trabalhosa para mim
 - **Construção de caixas com valores dinâmicos ao longo do tempo para expectativa de vida e PIB médio**  
   **Contribui para:** As caixas reforçam as tendências gerais ao destacar estatísticas centrais com valores atualizados conforme o tempo avança na animação. Ajudam o público a ancorar visualmente os dados numéricos sem sobrecarregar a visualização principal.
 
+### Leonardo Alexandre (9h)
 
+- Criação dos subplots laterais (PIB per capita e Expectativa de Vida ao longo do tempo)
+-- Implementação dos gráficos auxiliares que mostram a evolução histórica do país selecionado.
+-- Integração dos subplots com a seleção e o arrasto do país no gráfico principal, garantindo que os subplots sejam atualizados em tempo real conforme a interação do usuário.
+-- Sincronização visual dos marcadores nos subplots com o ponto selecionado/arrastado no gráfico principal.
+- Ajustes de layout e organização dos subplots para melhor visualização em diferentes tamanhos de tela.
+- Aprimoramento da experiência de usuário ao alternar entre países e ao reiniciar a visualização, garantindo que os subplots e o gráfico principal sejam limpos e retornem ao estado inicial ao clicar no botão “Reiniciar”.
+- Colaboração na construção e ajuste dos títulos dos gráficos e rótulos dos eixos, aprimorando a clareza e a comunicação visual da visualização.
+
+A tarefa que mais demandou tempo foi a criação e integração dos subplots laterais com o gráfico principal, especialmente para garantir que a atualização dos subplots fosse sempre sincronizada com a seleção e o arrasto dos países. Isso exigiu um cuidado especial com o gerenciamento do estado da aplicação e com a atualização dinâmica dos elementos SVG, além de diversos testes para garantir uma experiência fluida e sem bugs. No final, acredito que os subplots enriquecem bastante a análise e tornam a visualização mais completa e interativa.
+
+### Uso de GPT
+
+Utilizamos GPT para auxiliar o entendimento da sintaxe do D3 e especifidades do CSS.
 
 ## Fontes e inspirações
 
