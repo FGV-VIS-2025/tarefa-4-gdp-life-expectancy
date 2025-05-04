@@ -275,10 +275,9 @@
         .attr('class', 'axis-label')
         .attr('transform', 'rotate(-90)')
         .attr('x', -(CONFIG.height - CONFIG.margin.top - CONFIG.margin.bottom) / 2)
-        .attr('y', -CONFIG.margin.left + 12)
+        .attr('y', -CONFIG.margin.left + 20)
         .attr('fill', 'currentColor')
         .style('text-anchor', 'middle')
-        .style('font-size', '0.8em')
         .text('Expectativa de Vida (Anos)');
   }
 
