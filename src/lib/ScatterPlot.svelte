@@ -312,6 +312,23 @@
   function dragstarted(event, d) {
     if (!dataLoaded) return;
     
+    // Atualize o estado de seleção e destaque visual igual ao clique
+    selectedCountry = d.country;
+    selectedYear = d.year;
+    svg.selectAll('circle.data-point')
+      .transition().duration(200).ease(CONFIG.transitionEase)
+      .attr('opacity', p => (p.country === d.country && p.year === d.year) ? 1 : 0.1)
+      .attr('stroke', '#fff')
+      .attr('stroke-width', 1)
+      .attr('fill', p => CONFIG.pointColor(p));
+
+    svg.selectAll('circle.data-point')
+      .filter(p => p.country === d.country && p.year === d.year)
+      .transition().duration(200).ease(CONFIG.transitionEase)
+      .attr('stroke', '#000')
+      .attr('stroke-width', 2)
+      .attr('fill', '#fff');
+
     draggedCountry = d.country;
     currentClosestHighlightPoint = d;
 
