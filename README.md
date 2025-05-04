@@ -48,6 +48,23 @@ Fiz as seguintes contribuições para o trabalho em cerca de 10 - 15 horas:
 
 Certamente a interatividade de arrastar a bolinha foi a mais trabalhosa para mim, pois envolvia muitos updates em tempo real no estado da aplicação e sincronização com os gráficos auxiliares. Foi necessário lidar com eventos de mouse e garantir uma resposta fluida e precisa. No final, acredito que esse recurso se tornou um dos diferenciais da visualização e valeu o esforço.
 
+### Tomás:
+- **Adição da funcionalidade de reprodução dos dados de análise ao longo dos anos e da função _rewind_**  
+  **Contribui para:** Permite que o usuário observe a evolução temporal dos dados, facilitando a identificação de tendências e padrões ao longo do tempo. A função _rewind_ ajuda o usuário a revisar momentos específicos com clareza e fluidez.
+
+- **Ajuste na organização das cores em relação aos países**  
+  **Contribui para:** Padronização a paleta de cores melhora a distinção entre países e facilita a interpretação rápida dos dados, especialmente em visualizações agregadas  como é o caso.
+
+- **Inclusão de ferramentas de filtragem por continente**  
+  **Contribui para:** Permite análises regionais mais focadas, aumentando a relevância da visualização para públicos interessados em comparações geográficas específicas.
+
+- **Implementação de uma ferramenta de busca para múltiplos países de interesse**  
+  **Contribui para:** Agiliza a navegação para usuários que têm em mente países específicos, permitindo comparações direcionadas e interações mais pessoais com o conjunto de dados.
+
+- **Construção de caixas com valores dinâmicos ao longo do tempo para expectativa de vida e PIB médio**  
+  **Contribui para:** As caixas reforçam as tendências gerais ao destacar estatísticas centrais com valores atualizados conforme o tempo avança na animação. Ajudam o público a ancorar visualmente os dados numéricos sem sobrecarregar a visualização principal.
+
+
 
 ## Fontes e inspirações
 
