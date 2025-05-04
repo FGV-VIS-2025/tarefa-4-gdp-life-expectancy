@@ -977,6 +977,8 @@
   function resetSelection() {
     selectedCountry = null;
     selectedYear = years[0];
+    d3.select(gdpPlot).selectAll('*').remove();
+    d3.select(lexPlot).selectAll('*').remove();
     updatePlot(selectedYear);
   }
 
