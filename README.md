@@ -33,6 +33,21 @@ Nosso objetivo principal foi criar uma forma **interativa e intuitiva** de visua
 - Pensamos em usar gráficos de linha para todos os países ao longo do tempo, mas isso geraria excesso de informações visuais.
 - Avaliamos também animações automáticas contínuas, mas decidimos manter o controle manual para não comprometer a usabilidade.
 
+## Divisão de Trabalho:
+
+### Gabriel:
+Fiz as seguintes contribuições para o trabalho em cerca de 10 - 15 horas:
+- EDA e preparação dos dados para visualização.
+- Deploy para o GitHub Pages.
+- Estrutura inicial do scatter plot principal.
+- Interatividade de poder arrastar a bolinha (que representa um país).
+- Interatividade de aparecer infos sobre o país ao passar o mouse por cima da bolinha.
+- Formatação e adaptação dos eixos dos gráficos.
+- Anotações nos subplots indicando dados de previsão.
+- Adicionar e formatar as legendas dos eixos dos gráficos.
+
+Certamente a interatividade de arrastar a bolinha foi a mais trabalhosa para mim, pois envolvia muitos updates em tempo real no estado da aplicação e sincronização com os gráficos auxiliares. Foi necessário lidar com eventos de mouse e garantir uma resposta fluida e precisa. No final, acredito que esse recurso se tornou um dos diferenciais da visualização e valeu o esforço.
+
 
 ## Fontes e inspirações
 
