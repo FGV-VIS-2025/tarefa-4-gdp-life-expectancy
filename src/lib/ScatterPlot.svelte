@@ -974,6 +974,12 @@
     updateCountryLabels();
   }
 
+  function resetSelection() {
+    selectedCountry = null;
+    selectedYear = years[0];
+    updatePlot(selectedYear);
+  }
+
   // Inicialização quando o componente é montado
   onMount(async () => {
     try {
@@ -1033,6 +1039,7 @@
       <li>Usar os controles de tempo para avançar ou retroceder nos anos</li>
       <li>Visualizar estatísticas detalhadas nos gráficos auxiliares</li>
       <li>Passar o mouse sobre os pontos para ver informações detalhadas</li>
+      <li>Clicar em <b>Reiniciar</b> para voltar ao estado inicial</li>
     </ul>
   </div>
   
@@ -1105,6 +1112,9 @@
     </button>
     <button on:click={togglePlay} class="control-button">
       {playing ? '⏸️ Pausar' : '▶️ Reproduzir'}
+    </button>
+    <button on:click={resetSelection} class="control-button">
+      🔄 Reiniciar
     </button>
     <input
       id="year-slider"
