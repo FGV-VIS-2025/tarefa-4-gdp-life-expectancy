@@ -59,6 +59,8 @@
     'South Africa': 'Africa', 'South Sudan': 'Africa', 'Sudan': 'Africa', 'Swaziland': 'Africa',
     'Tanzania': 'Africa', 'Togo': 'Africa', 'Tunisia': 'Africa', 'Uganda': 'Africa',
     'Zambia': 'Africa', 'Zimbabwe': 'Africa',
+    'Algeria': 'Africa', 'Congo, Dem. Rep.': 'Africa', 'Congo, Rep.': 'Africa',
+    'Eswatini': 'Africa',
 
     // Américas
     'Argentina': 'Americas', 'Bolivia': 'Americas', 'Brazil': 'Americas', 'Chile': 'Americas',
@@ -67,6 +69,10 @@
     'Honduras': 'Americas', 'Jamaica': 'Americas', 'Mexico': 'Americas', 'Nicaragua': 'Americas',
     'Panama': 'Americas', 'Paraguay': 'Americas', 'Peru': 'Americas', 'Trinidad and Tobago': 'Americas',
     'Uruguay': 'Americas', 'Venezuela': 'Americas', 'Canada': 'Americas', 'USA': 'Americas',
+    'Belize': 'Americas', 'Suriname': 'Americas', 'Barbados': 'Americas', 'Bahamas': 'Americas',
+    'Antigua and Barbuda': 'Americas', 'Guyana': 'Americas', 'St. Vincent and the Grenadines': 'Americas',
+    'St. Kitts and Nevis': 'Americas', 'Dominica': 'Americas', 'Grenada': 'Americas',
+    'St. Lucia': 'Americas',
 
     // Ásia
     'Afghanistan': 'Asia', 'Armenia': 'Asia', 'Azerbaijan': 'Asia', 'Bahrain': 'Asia',
@@ -74,32 +80,36 @@
     'China': 'Asia', 'Cyprus': 'Asia', 'Georgia': 'Asia', 'India': 'Asia',
     'Indonesia': 'Asia', 'Iran': 'Asia', 'Iraq': 'Asia', 'Israel': 'Asia',
     'Japan': 'Asia', 'Jordan': 'Asia', 'Kazakhstan': 'Asia', 'Kuwait': 'Asia',
-    'Kyrgyzstan': 'Asia', 'Laos': 'Asia', 'Lebanon': 'Asia', 'Malaysia': 'Asia',
+    'Kyrgyzstan': 'Asia', 'Krygyz Republic': 'Asia', 'Laos': 'Asia', 'Lebanon': 'Asia', 'Malaysia': 'Asia',
     'Maldives': 'Asia', 'Mongolia': 'Asia', 'Myanmar': 'Asia', 'Nepal': 'Asia',
     'North Korea': 'Asia', 'Oman': 'Asia', 'Pakistan': 'Asia', 'Palestine': 'Asia',
     'Philippines': 'Asia', 'Qatar': 'Asia', 'Saudi Arabia': 'Asia', 'Singapore': 'Asia',
     'South Korea': 'Asia', 'Sri Lanka': 'Asia', 'Syria': 'Asia', 'Taiwan': 'Asia',
     'Tajikistan': 'Asia', 'Thailand': 'Asia', 'Timor-Leste': 'Asia', 'Turkey': 'Asia',
     'Turkmenistan': 'Asia', 'United Arab Emirates': 'Asia', 'Uzbekistan': 'Asia', 'Vietnam': 'Asia',
-    'Yemen': 'Asia','Hong Kong, China':'Asia',
+    'Yemen': 'Asia','Hong Kong, China':'Asia', 'UAE': 'Asia', 'Lao': 'Asia',
+    'Kyrgyz Republic': 'Asia',
 
     // Europa
     'Albania': 'Europe', 'Austria': 'Europe', 'Belarus': 'Europe', 'Belgium': 'Europe',
     'Bosnia and Herzegovina': 'Europe', 'Bulgaria': 'Europe', 'Croatia': 'Europe', 'Czech Republic': 'Europe',
     'Denmark': 'Europe', 'Estonia': 'Europe', 'Finland': 'Europe', 'France': 'Europe',
     'Germany': 'Europe', 'Greece': 'Europe', 'Hungary': 'Europe', 'Iceland': 'Europe',
-    'Ireland': 'Ireland', 'Italy': 'Europe', 'Latvia': 'Europe', 'Lithuania': 'Europe',
+    'Ireland': 'Europe', 'Italy': 'Europe', 'Latvia': 'Europe', 'Lithuania': 'Europe',
     'Luxembourg': 'Europe', 'Macedonia': 'Europe', 'Malta': 'Europe', 'Moldova': 'Europe',
     'Montenegro': 'Europe', 'Netherlands': 'Europe', 'Norway': 'Europe', 'Poland': 'Europe',
     'Portugal': 'Europe', 'Romania': 'Europe', 'Russia': 'Europe', 'Serbia': 'Europe',
     'Slovakia': 'Europe', 'Slovenia': 'Europe', 'Spain': 'Europe', 'Sweden': 'Europe',
     'Switzerland': 'Europe', 'Ukraine': 'Europe', 'UK': 'Europe','Monaco':'Europe',
+    'San Marino': 'Europe', 'Andorra': 'Europe', 'North Macedonia': 'Europe',
+    'Slovak Republic': 'Europe',
 
     // Oceania
     'Australia': 'Oceania', 'Fiji': 'Oceania', 'Kiribati': 'Oceania', 'Marshall Islands': 'Oceania',
     'Micronesia': 'Oceania', 'Nauru': 'Oceania', 'New Zealand': 'Oceania', 'Palau': 'Oceania',
     'Papua New Guinea': 'Oceania', 'Samoa': 'Oceania', 'Solomon Islands': 'Oceania', 'Tonga': 'Oceania',
-    'Tuvalu': 'Oceania', 'Vanuatu': 'Oceania'
+    'Tuvalu': 'Oceania', 'Vanuatu': 'Oceania',
+    'Micronesia, Fed. Sts': 'Oceania',
   };
 
   // Elementos do DOM
