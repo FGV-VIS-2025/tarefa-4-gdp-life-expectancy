@@ -1023,7 +1023,7 @@
 <svelte:window on:beforeunload={cleanup}/>
 
 <div class="visualization-container">
-  <h2>PIB vs. Expectativa de Vida Mundial</h2>
+  <h2>Relação Mundial entre PIB e Expectativa de Vida</h2>
   
   <div class="description">
     <p>Esta visualização interativa permite explorar a relação entre o PIB per capita e a expectativa de vida dos países ao longo do tempo. Você pode:</p>
