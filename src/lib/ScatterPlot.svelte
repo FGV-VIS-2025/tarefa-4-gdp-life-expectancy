@@ -501,7 +501,7 @@
     const targetY = rect.top + window.scrollY;
     
     tooltip.html(
-      `<div><strong>${d.country}</strong> (${d.year})</div>` + // Adicionado nome e ano para clareza
+      `<div><strong>País:</strong> ${d.country}</div>` + // Adicionado nome e ano para clareza
       `<div><strong>Continente:</strong> ${d.continent}</div>` +
       `<div><strong>PIB per Capita:</strong> ${d.gdp} USD</div>` + // Usar formato consistente
       `<div><strong>Expectativa de Vida:</strong> ${CONFIG.lexValueFormat(d.lex)} anos</div>` // Usar formato consistente
