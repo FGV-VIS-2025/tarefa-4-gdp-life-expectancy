@@ -1021,7 +1021,7 @@
 </script>
 
 <svelte:window on:beforeunload={cleanup}/>
-
+ 
 <div class="visualization-container">
   <h2>Relação Mundial entre PIB e Expectativa de Vida</h2>
   
