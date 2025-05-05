@@ -49,6 +49,7 @@ Fiz as seguintes contribuições para o trabalho em cerca de 10 - 15 horas:
 Certamente a interatividade de arrastar a bolinha foi a mais trabalhosa para mim, pois envolvia muitos updates em tempo real no estado da aplicação e sincronização com os gráficos auxiliares. Foi necessário lidar com eventos de mouse e garantir uma resposta fluida e precisa. No final, acredito que esse recurso se tornou um dos diferenciais da visualização e valeu o esforço.
 
 ### Tomás (10h):
+Fiz as seguintes contribuições para o trabalho em cerca de 10 horas:
 - **Adição da funcionalidade de reprodução dos dados de análise ao longo dos anos e da função _rewind_**  
   **Contribui para:** Permite que o usuário observe a evolução temporal dos dados, facilitando a identificação de tendências e padrões ao longo do tempo. A função _rewind_ ajuda o usuário a revisar momentos específicos com clareza e fluidez.
 
@@ -64,8 +65,10 @@ Certamente a interatividade de arrastar a bolinha foi a mais trabalhosa para mim
 - **Construção de caixas com valores dinâmicos ao longo do tempo para expectativa de vida e PIB médio**  
   **Contribui para:** As caixas reforçam as tendências gerais ao destacar estatísticas centrais com valores atualizados conforme o tempo avança na animação. Ajudam o público a ancorar visualmente os dados numéricos sem sobrecarregar a visualização principal.
 
-### Leonardo Alexandre (9h):
+O aspecto que mais demandou tempo foi a implementação do botão de reprodução dos dados ao longo dos anos. Foi necessário garantir que a animação fosse fluida, sincronizada com as demais interações (como rewind e seleção de países), e que o estado da aplicação fosse corretamente atualizado a cada avanço temporal. Esse recurso exigiu diversos testes e ajustes para proporcionar uma experiência intuitiva e sem travamentos ao usuário.
 
+### Leonardo Alexandre:
+Realizei as seguintes contribuições para o trabalho em cerca de 9h:
 - Criação dos subplots laterais (PIB per capita e Expectativa de Vida ao longo do tempo)
   - Implementação dos gráficos auxiliares que mostram a evolução histórica do país selecionado.
   - Integração dos subplots com a seleção e o arrasto do país no gráfico principal, garantindo que os subplots sejam atualizados em tempo real conforme a interação do usuário.
